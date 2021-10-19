@@ -2,6 +2,7 @@
   import { chartType, myOptions } from './settings'
 
   import Select from './Select.svelte'
+  import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
 
   let type = chartType
@@ -20,13 +21,27 @@
     fetchedData = data
   }
 
-  const promise = getData('./api.json')
+  const promise = getData('./api/get.json')
+
+  const refresh = () => (config = config)
 </script>
 
-<Select bind:type />
+<header>
+  <Select bind:type />
+  <Refresher on:click={refresh} />
+</header>
 
 {#await promise}
   <p>loading...</p>
 {:then}
   <Chart {config} />
 {/await}
+
+<style>
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 1rem;
+  }
+</style>
