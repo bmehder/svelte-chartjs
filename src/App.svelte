@@ -23,7 +23,7 @@
 
   const promise = getData('./api/get.json')
 
-  const refresh = () => (config = config)
+  const refresh = () => getData('./api/get.json')
 </script>
 
 <header>
@@ -33,7 +33,7 @@
 
 {#await promise}
   <p>loading...</p>
-{:then}
+{:then _dataReceived}
   <Chart {config} />
 {/await}
 
