@@ -17,5 +17,6 @@
     outline: none;
     border-radius: 1rem;
     font-weight: 600;
+    cursor: pointer;
   }
 </style>

@@ -47,7 +47,6 @@
     align-items: baseline;
     gap: 1rem;
     padding: 1.5rem;
-    background-color: #f1f1f1;
     background-color: #323232;
   }
   main {
