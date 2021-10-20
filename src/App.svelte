@@ -7,6 +7,7 @@
 
   let type = chartType
   let fetchedData
+  let isDark = false
 
   $: config = {
     type,
@@ -26,12 +27,12 @@
   const refresh = () => getData('./api/get.json')
 </script>
 
-<header>
+<header on:dblclick={() => (isDark = !isDark)}>
   <Select bind:type />
   <Refresher on:click={refresh} />
 </header>
 
-<main>
+<main class:dark={isDark}>
   {#await promise}
     <p>loading...</p>
   {:then _dataReceived}
@@ -52,6 +53,10 @@
   main {
     display: grid;
     place-items: center;
-    padding-top: 1.5rem;
+    padding: 2rem;
+    background: white;
+  }
+  .dark {
+    background-color: #424242;
   }
 </style>
