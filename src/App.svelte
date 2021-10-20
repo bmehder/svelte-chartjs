@@ -1,6 +1,7 @@
 <script>
   import { chartType, myOptions } from './settings'
 
+  import Spinner from './Spinner.svelte'
   import Select from './Select.svelte'
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
@@ -34,7 +35,7 @@
 
 <main class:dark={isDark}>
   {#await promise}
-    <p>loading...</p>
+    <Spinner />
   {:then _dataReceived}
     <Chart {config} />
   {/await}
@@ -42,6 +43,7 @@
 
 <style>
   header {
+    height: 10vh;
     display: flex;
     justify-content: center;
     align-items: baseline;
@@ -50,6 +52,7 @@
     background-color: #323232;
   }
   main {
+    height: 90vh;
     display: grid;
     place-items: center;
     padding: 2rem;
