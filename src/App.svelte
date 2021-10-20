@@ -6,6 +6,8 @@
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
 
+  const api = './api/get.json'
+
   let type = chartType
   let fetchedData
   let isDark = false
@@ -23,14 +25,14 @@
     fetchedData = data
   }
 
-  const promise = getData('./api/get.json')
+  const promise = getData(api)
 
-  const refresh = () => getData('./api/get.json')
+  const refreshData = () => getData(api)
 </script>
 
 <header on:dblclick={() => (isDark = !isDark)}>
   <Select bind:type />
-  <Refresher on:click={refresh} />
+  <Refresher on:click={refreshData} />
 </header>
 
 <main class:dark={isDark}>
@@ -49,6 +51,7 @@
     align-items: baseline;
     gap: 1rem;
     padding: 1.5rem;
+    padding-left: 70px;
     background-color: #323232;
   }
   main {
@@ -61,4 +64,12 @@
   .dark {
     background-color: #424242;
   }
+  /* @media screen and (max-width: 300px) {
+    header {
+      height: 20vh;
+    }
+    main {
+      height: 80vh;
+    }
+  } */
 </style>
