@@ -18,5 +18,6 @@
     border-radius: 0.8rem;
     font-weight: 600;
     cursor: pointer;
+    user-select: none;
   }
 </style>

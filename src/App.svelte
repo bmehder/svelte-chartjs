@@ -6,11 +6,11 @@
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
 
-  const api = './api/get.json'
+  const API_ROUTE = './api/get.json'
 
   let type = chartType
   let fetchedData
-  let isDark = false
+  let isDarkMode = false
 
   $: config = {
     type,
@@ -25,17 +25,17 @@
     fetchedData = data
   }
 
-  const promise = getData(api)
+  const promise = getData(API_ROUTE)
 
-  const refreshData = () => getData(api)
+  const refreshData = () => getData(API_ROUTE)
 </script>
 
-<header on:dblclick={() => (isDark = !isDark)}>
+<header on:dblclick={() => (isDarkMode = !isDarkMode)}>
   <Select bind:type />
   <Refresher on:click={refreshData} />
 </header>
 
-<main class:dark={isDark}>
+<main class:dark={isDarkMode}>
   {#await promise}
     <Spinner />
   {:then _dataReceived}
@@ -51,7 +51,7 @@
     align-items: baseline;
     gap: 1rem;
     padding: 1.5rem;
-    padding-left: 70px;
+    padding-left: 60px;
     background-color: #323232;
   }
   main {
@@ -64,12 +64,4 @@
   .dark {
     background-color: #424242;
   }
-  /* @media screen and (max-width: 300px) {
-    header {
-      height: 20vh;
-    }
-    main {
-      height: 80vh;
-    }
-  } */
 </style>
