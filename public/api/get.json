@@ -7,7 +7,7 @@
   ],
   "datasets": [
     {
-      "label": "",
+      "label": "Appointment Requests (by location)",
       "backgroundColor": [
         "#3e95cd",
         "#8e5ea2",
