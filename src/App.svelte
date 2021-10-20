@@ -31,11 +31,13 @@
   <Refresher on:click={refresh} />
 </header>
 
-{#await promise}
-  <p>loading...</p>
-{:then _dataReceived}
-  <Chart {config} />
-{/await}
+<main>
+  {#await promise}
+    <p>loading...</p>
+  {:then _dataReceived}
+    <Chart {config} />
+  {/await}
+</main>
 
 <style>
   header {
@@ -43,5 +45,13 @@
     justify-content: center;
     align-items: baseline;
     gap: 1rem;
+    padding: 1.5rem;
+    background-color: #f1f1f1;
+    background-color: #323232;
+  }
+  main {
+    display: grid;
+    place-items: center;
+    padding-top: 1.5rem;
   }
 </style>

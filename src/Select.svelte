@@ -14,8 +14,8 @@
   select {
     display: block;
     padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
     outline: none;
+    border-radius: 1rem;
+    font-weight: 600;
   }
 </style>

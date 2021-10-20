@@ -8,3 +8,10 @@
 </svelte:head>
 
 <i class="fas fa-sync" on:click />
+
+<style>
+  i {
+    color: #f1f1f1;
+    cursor: pointer;
+  }
+</style>
