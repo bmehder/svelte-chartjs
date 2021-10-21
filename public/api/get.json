@@ -21,7 +21,8 @@
         52
       ],
       "tension": 0.32,
-      "borderWidth": 1
+      "borderWidth": 1,
+      "fill": true
     }
   ]
 }
