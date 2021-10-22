@@ -25,6 +25,10 @@
   }
 
   const getData = async url => {
+    console.log('Start: ' + startDate)
+    console.log('End: ' + endDate)
+    console.log('')
+
     const res = await fetch(url)
     const data = await res.json()
 
@@ -35,12 +39,11 @@
 
   const refreshData = () => getData(apiRoute)
 
-  // $: console.log('Start: ' + startDate, 'End: ' + endDate)
   $: console.log('Request:')
   $: console.log(window.location.href + apiRoute)
   $: console.log('')
-  $: console.log('Response:')
-  $: fetchedData && console.log(JSON.stringify(fetchedData, null, 4))
+  $: fetchedData &&
+    console.log('Response: \n' + JSON.stringify(fetchedData, null, 4))
 </script>
 
 <header on:dblclick={() => (isDarkMode = !isDarkMode)}>
