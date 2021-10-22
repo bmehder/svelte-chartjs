@@ -25,8 +25,14 @@
   }
 
   const getData = async url => {
-    console.log('Start: ' + startDate)
-    console.log('End: ' + endDate)
+    console.clear()
+    console.log('%cStart Date   End Date', 'font-weight: bold;')
+    console.dir(startDate + '   ' + endDate)
+    console.log('')
+    console.log('%cRequest:', 'font-weight: bold;')
+    console.log(
+      window.location.href + `api/?startDate=${startDate}&endDate=${endDate}`
+    )
     console.log('')
 
     const res = await fetch(url)
@@ -39,17 +45,14 @@
 
   const refreshData = () => getData(apiRoute)
 
-  $: console.log('Request:')
-  $: console.log(window.location.href + apiRoute)
-  $: console.log('')
-  $: fetchedData &&
-    console.log('Response: \n' + JSON.stringify(fetchedData, null, 4))
+  $: fetchedData && console.log('%cResponse:', 'font-weight: bold;')
+  $: fetchedData && console.log(JSON.stringify(fetchedData, null, 4))
 </script>
 
 <header on:dblclick={() => (isDarkMode = !isDarkMode)}>
+  <Select bind:type />
   <DatePicker bind:value={startDate} />
   <DatePicker bind:value={endDate} />
-  <Select bind:type />
   <Refresher on:click={refreshData} />
 </header>
 
