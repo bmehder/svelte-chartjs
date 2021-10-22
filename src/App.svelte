@@ -16,7 +16,7 @@
   let fetchedData
   let isDarkMode = false
 
-  let apiRoute = `/api/get.json?startDate=${startDate}&endDate=${endDate}`
+  let apiRoute = `api/get.json?startDate=${startDate}&endDate=${endDate}`
 
   $: config = {
     type,
