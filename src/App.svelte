@@ -25,18 +25,19 @@
   }
 
   const getData = async url => {
-    console.clear()
-    console.log('%cStart Date   End Date', 'font-weight: bold;')
-    console.dir(startDate + '   ' + endDate)
-    console.log('')
-    console.log('%cRequest:', 'font-weight: bold;')
-    console.log(window.location.href + apiRoute)
-    console.log('')
-
+    printToConsole()
     const res = await fetch(url)
     const data = await res.json()
 
     fetchedData = data
+  }
+
+  const printToConsole = () => {
+    console.clear()
+    console.log('%c\nStart Date   End Date', 'font-weight: bold;')
+    console.log(startDate + '   ' + endDate + '\n\n')
+    console.log('%cRequest:', 'font-weight: bold;')
+    console.log(window.location.href + apiRoute + '\n\n')
   }
 
   const promise = getData(apiRoute)
