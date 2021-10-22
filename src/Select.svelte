@@ -12,11 +12,8 @@
 
 <style>
   select {
-    display: block;
-    padding: 0.4rem 0.8rem;
+    padding: 0.5rem;
     outline: none;
-    border-radius: 0.8rem;
-    font-weight: 600;
     cursor: pointer;
     user-select: none;
   }
