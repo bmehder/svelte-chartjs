@@ -16,7 +16,7 @@
   let fetchedData
   let isDarkMode = false
 
-  let apiRoute = `./api/get.json?startDate=${startDate}&endDate=${endDate}`
+  let apiRoute = `/api/get.json?startDate=${startDate}&endDate=${endDate}`
 
   $: config = {
     type,
@@ -35,8 +35,12 @@
 
   const refreshData = () => getData(apiRoute)
 
-  $: console.log('Start: ' + startDate, 'End: ' + endDate)
-  $: fetchedData && console.log(JSON.stringify(fetchedData, null, 2))
+  // $: console.log('Start: ' + startDate, 'End: ' + endDate)
+  $: console.log('Request:')
+  $: console.log(window.location.href + apiRoute)
+  $: console.log('')
+  $: console.log('Response:')
+  $: fetchedData && console.log(JSON.stringify(fetchedData, null, 4))
 </script>
 
 <header on:dblclick={() => (isDarkMode = !isDarkMode)}>
