@@ -30,9 +30,7 @@
     console.dir(startDate + '   ' + endDate)
     console.log('')
     console.log('%cRequest:', 'font-weight: bold;')
-    console.log(
-      window.location.href + `api/?startDate=${startDate}&endDate=${endDate}`
-    )
+    console.log(window.location.href + apiRoute)
     console.log('')
 
     const res = await fetch(url)
