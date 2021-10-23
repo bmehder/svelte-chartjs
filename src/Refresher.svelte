@@ -11,15 +11,15 @@
   />
 </svelte:head>
 
-<i class="fas fa-2x fa-sync" on:click class:isLoading />
+<i class="fas fa-2x fa-sync" class:isLoading on:click />
 
 <style>
   i {
-    color: #f1f1f1;
+    color: #f4f4f4;
     cursor: pointer;
   }
   .isLoading {
-    animation: spin 2s infinite forwards ease-in-out;
+    animation: spin 2s;
   }
 
   @keyframes spin {
@@ -27,7 +27,7 @@
       transform: rotate(0deg);
     }
     100% {
-      transform: rotate(1440deg);
+      transform: rotate(360deg);
     }
   }
 </style>

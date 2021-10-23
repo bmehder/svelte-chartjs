@@ -27,11 +27,14 @@
 
   const getData = async url => {
     isLoading = true
+
     printToConsole()
+
     const res = await fetch(url)
     const data = await res.json()
 
     fetchedData = data
+
     isLoading = false
   }
 
@@ -45,9 +48,7 @@
 
   const promise = getData(apiRoute)
 
-  const refreshData = () => {
-    getData(apiRoute)
-  }
+  const refreshData = () => getData(apiRoute)
 
   $: fetchedData && console.log('%cResponse:', 'font-weight: bold;')
   $: fetchedData && console.log(JSON.stringify(fetchedData, null, 4))
