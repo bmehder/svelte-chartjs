@@ -53,7 +53,7 @@
 <main class:dark={isDarkMode}>
   {#await promise}
     <Spinner />
-  {:then}
+  {:then _}
     <Chart {config} />
   {:catch err}
     <p>💩<br />{err}</p>
