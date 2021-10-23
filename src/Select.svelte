@@ -12,7 +12,12 @@
 
 <style>
   select {
+    -webkit-padding: 0.5em 0;
     padding: 0.5rem;
+    font-family: inherit;
+    font-size: inherit;
+    border: 1px solid #ccc;
+    border-radius: 2px;
     outline: none;
     cursor: pointer;
     user-select: none;

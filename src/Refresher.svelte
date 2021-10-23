@@ -2,27 +2,19 @@
   export let isLoading = false
 </script>
 
-<svelte:head>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-</svelte:head>
-
-<i class="fas fa-2x fa-sync" class:isLoading on:click />
+<span class:isLoading on:click>&#x21bb;</span>
 
 <style>
-  i {
+  span {
+    font-size: 3rem;
     color: #f4f4f4;
     cursor: pointer;
   }
   .isLoading {
+    transform-origin: center;
     animation: spin 2s infinite;
     animation-delay: 200ms;
   }
-
   @keyframes spin {
     0% {
       transform: rotate(0deg);

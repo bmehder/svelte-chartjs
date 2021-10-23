@@ -1,6 +1,4 @@
 <script>
-  import { chartType, myOptions } from './settings'
-
   import Spinner from './Spinner.svelte'
   import DatePicker from './DatePicker.svelte'
   import Select from './Select.svelte'
@@ -11,7 +9,7 @@
 
   let startDate = '2021-07-18'
   let endDate = today
-  let type = chartType
+  let type = 'bar'
 
   let fetchedData
   let isDarkMode = false
@@ -22,7 +20,6 @@
   $: config = {
     type,
     data: fetchedData,
-    options: myOptions,
   }
 
   const getData = async url => {
@@ -72,6 +69,13 @@
 </footer>
 
 <style>
+  main {
+    height: 85vh;
+    display: grid;
+    place-items: center;
+    padding: 0 2rem;
+    background: white;
+  }
   footer {
     height: 15vh;
     display: flex;
@@ -79,15 +83,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-    /* padding-left: 60px; */
     background-color: #323232;
-  }
-  main {
-    height: 85vh;
-    display: grid;
-    place-items: center;
-    padding: 0 2rem;
-    background: white;
   }
   .dark {
     background-color: #424242;
