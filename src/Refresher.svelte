@@ -19,7 +19,7 @@
     cursor: pointer;
   }
   .isLoading {
-    animation: spin 2s;
+    animation: spin 2s infinite;
   }
 
   @keyframes spin {

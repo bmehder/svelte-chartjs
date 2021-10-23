@@ -59,6 +59,8 @@
     <Spinner />
   {:then}
     <Chart {config} />
+  {:catch err}
+    <p>{err}</p>
   {/await}
 </main>
 
@@ -84,7 +86,7 @@
     height: 85vh;
     display: grid;
     place-items: center;
-    padding: 2rem;
+    padding: 0 2rem;
     background: white;
   }
   .dark {
