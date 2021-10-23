@@ -55,6 +55,8 @@
   const refreshData = () => getData(apiRoute()).then(() => printToConsole())
 </script>
 
+<svelte:window on:keypress={e => e.key === 'Enter' && refreshData()} />
+
 <main class:dark={isDarkMode}>
   {#await promise}
     <Spinner />
