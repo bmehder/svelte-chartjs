@@ -10,6 +10,7 @@
   let startDate = '2021-07-18'
   let endDate = today
   let type = 'bar'
+
   let apiRoute = `api/get.json?startDate=${startDate}&endDate=${endDate}`
 
   let fetchedData = null
@@ -26,6 +27,7 @@
 
     const res = await fetch(url)
     !res.ok && (isLoading = false)
+
     const data = await res.json()
 
     fetchedData = data
