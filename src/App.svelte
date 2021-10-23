@@ -11,7 +11,12 @@
   let endDate = today
   let type = 'bar'
 
-  let apiRoute = `api/get.json?startDate=${startDate}&endDate=${endDate}`
+  $: startDate
+  $: endDate
+
+  let apiRoute = () => {
+    return `api/get.json?startDate=${startDate}&endDate=${endDate}`
+  }
 
   let fetchedData = null
   let isLoading = false
@@ -40,14 +45,14 @@
     console.log('%c\nStart Date   End Date', 'font-weight: bold;')
     console.log(startDate + '   ' + endDate + '\n\n')
     console.log('%cRequest:', 'font-weight: bold;')
-    console.log(window.location.href + apiRoute + '\n\n')
+    console.log(window.location.href + apiRoute() + '\n\n')
     console.log('%cResponse:', 'font-weight: bold;')
     console.log(JSON.stringify(fetchedData, null, 4))
   }
 
-  const promise = getData(apiRoute).then(() => printToConsole())
+  const promise = getData(apiRoute()).then(() => printToConsole())
 
-  const refreshData = () => getData(apiRoute).then(() => printToConsole())
+  const refreshData = () => getData(apiRoute()).then(() => printToConsole())
 </script>
 
 <main class:dark={isDarkMode}>
