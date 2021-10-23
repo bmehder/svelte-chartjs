@@ -9,6 +9,7 @@
     font-size: 3rem;
     color: #f4f4f4;
     cursor: pointer;
+    user-select: none;
   }
   .isLoading {
     transform-origin: center;

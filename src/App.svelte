@@ -10,12 +10,11 @@
   let startDate = '2021-07-18'
   let endDate = today
   let type = 'bar'
-
-  let fetchedData
-  let isDarkMode = false
-  let isLoading = false
-
   let apiRoute = `api/get.json?startDate=${startDate}&endDate=${endDate}`
+
+  let fetchedData = null
+  let isLoading = false
+  let isDarkMode = false
 
   $: config = {
     type,
@@ -25,9 +24,8 @@
   const getData = async url => {
     isLoading = true
 
-    printToConsole()
-
     const res = await fetch(url)
+    !res.ok && (isLoading = false)
     const data = await res.json()
 
     fetchedData = data
@@ -41,14 +39,13 @@
     console.log(startDate + '   ' + endDate + '\n\n')
     console.log('%cRequest:', 'font-weight: bold;')
     console.log(window.location.href + apiRoute + '\n\n')
+    console.log('%cResponse:', 'font-weight: bold;')
+    console.log(JSON.stringify(fetchedData, null, 4))
   }
 
-  const promise = getData(apiRoute)
+  const promise = getData(apiRoute).then(() => printToConsole())
 
-  const refreshData = () => getData(apiRoute)
-
-  $: fetchedData && console.log('%cResponse:', 'font-weight: bold;')
-  $: fetchedData && console.log(JSON.stringify(fetchedData, null, 4))
+  const refreshData = () => getData(apiRoute).then(() => printToConsole())
 </script>
 
 <main class:dark={isDarkMode}>
@@ -57,7 +54,7 @@
   {:then}
     <Chart {config} />
   {:catch err}
-    <p>{err}</p>
+    <p>💩<br />{err}</p>
   {/await}
 </main>
 
@@ -76,6 +73,10 @@
     padding: 0 2rem;
     background: white;
   }
+  p {
+    font-size: 10vw;
+    text-align: center;
+  }
   footer {
     height: 15vh;
     display: flex;
@@ -87,5 +88,16 @@
   }
   .dark {
     background-color: #424242;
+  }
+
+  :global(*) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  :global(body) {
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   }
 </style>
