@@ -15,6 +15,7 @@
 
   let fetchedData
   let isDarkMode = false
+  let isLoading = false
 
   let apiRoute = `api/get.json?startDate=${startDate}&endDate=${endDate}`
 
@@ -25,11 +26,13 @@
   }
 
   const getData = async url => {
+    isLoading = true
     printToConsole()
     const res = await fetch(url)
     const data = await res.json()
 
     fetchedData = data
+    isLoading = false
   }
 
   const printToConsole = () => {
@@ -42,18 +45,13 @@
 
   const promise = getData(apiRoute)
 
-  const refreshData = () => getData(apiRoute)
+  const refreshData = () => {
+    getData(apiRoute)
+  }
 
   $: fetchedData && console.log('%cResponse:', 'font-weight: bold;')
   $: fetchedData && console.log(JSON.stringify(fetchedData, null, 4))
 </script>
-
-<header on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select bind:type />
-  <DatePicker bind:value={startDate} />
-  <DatePicker bind:value={endDate} />
-  <Refresher on:click={refreshData} />
-</header>
 
 <main class:dark={isDarkMode}>
   {#await promise}
@@ -63,19 +61,26 @@
   {/await}
 </main>
 
+<footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
+  <Select bind:type />
+  <DatePicker bind:value={startDate} />
+  <DatePicker bind:value={endDate} />
+  <Refresher on:click={refreshData} {isLoading} />
+</footer>
+
 <style>
-  header {
-    height: 10vh;
+  footer {
+    height: 15vh;
     display: flex;
     justify-content: center;
-    align-items: baseline;
+    align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-    padding-left: 60px;
+    /* padding-left: 60px; */
     background-color: #323232;
   }
   main {
-    height: 90vh;
+    height: 85vh;
     display: grid;
     place-items: center;
     padding: 2rem;

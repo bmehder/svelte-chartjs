@@ -1,3 +1,7 @@
+<script>
+  export let isLoading = false
+</script>
+
 <svelte:head>
   <link
     rel="stylesheet"
@@ -7,11 +11,23 @@
   />
 </svelte:head>
 
-<i class="fas fa-sync" on:click />
+<i class="fas fa-2x fa-sync" on:click class:isLoading />
 
 <style>
   i {
     color: #f1f1f1;
     cursor: pointer;
+  }
+  .isLoading {
+    animation: spin 2s infinite forwards ease-in-out;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(1440deg);
+    }
   }
 </style>
