@@ -20,6 +20,7 @@
   }
   .isLoading {
     animation: spin 2s infinite;
+    animation-delay: 200ms;
   }
 
   @keyframes spin {
