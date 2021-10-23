@@ -21,3 +21,9 @@
 </script>
 
 <canvas use:handleChart={config} />
+
+<style>
+  canvas {
+    max-height: 80vh;
+  }
+</style>
