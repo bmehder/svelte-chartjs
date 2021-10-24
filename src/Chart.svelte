@@ -30,7 +30,7 @@
 
 {#if dataURL}
   <aside transition:scale>
-    <input value={dataURL} />
+    <input value={dataURL} readonly />
     <button on:click={() => (dataURL = null)}>X</button>
   </aside>
 {/if}
