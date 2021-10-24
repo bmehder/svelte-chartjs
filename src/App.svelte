@@ -97,7 +97,7 @@
 </main>
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select bind:type={report} types={reports} />
+  <Select bind:type={report} types={reports} on:change={refreshData} />
   <Select bind:type {types} />
   <DatePicker bind:value={startDate} />
   <DatePicker bind:value={endDate} />
@@ -121,7 +121,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* flex-wrap: wrap; */
     gap: 1rem;
     padding: 1.5rem;
     background-color: #323232;

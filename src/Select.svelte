@@ -3,7 +3,7 @@
   export let type
 </script>
 
-<select bind:value={type}>
+<select bind:value={type} on:change>
   {#each types as { value, name }}
     <option {value}>{name}</option>
   {/each}
