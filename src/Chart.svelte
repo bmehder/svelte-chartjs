@@ -23,33 +23,20 @@
     }
   }
 
-  const saveChart = () => (dataURL = canvasEl?.toDataURL())
+  const saveImageToClipboard = () => {
+    dataURL = canvasEl?.toDataURL()
+    navigator.clipboard.writeText(dataURL).then(() => alert('Copied'))
+  }
 </script>
 
-<canvas bind:this={canvasEl} use:handleChart={config} on:dblclick={saveChart} />
-
-{#if dataURL}
-  <aside transition:scale>
-    <input value={dataURL} readonly />
-    <button on:click={() => (dataURL = null)}>X</button>
-  </aside>
-{/if}
+<canvas
+  bind:this={canvasEl}
+  use:handleChart={config}
+  on:dblclick={saveImageToClipboard}
+/>
 
 <style>
   canvas {
     max-height: 80vh;
-  }
-  aside {
-    position: absolute;
-    padding: 1rem;
-    display: flex;
-    background-color: white;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
-  }
-  input,
-  button {
-    padding: 1rem;
-    z-index: 1;
-    cursor: pointer;
   }
 </style>
