@@ -7,6 +7,7 @@
 <style>
   input {
     -webkit-padding: 0.4em 0;
+    /* margin-top: 1rem; */
     padding: 0.4em;
     font-family: inherit;
     font-size: inherit;
@@ -15,7 +16,7 @@
   }
   @media screen and (max-width: 600px) {
     input {
-      min-width: 20%;
+      width: 20%;
     }
   }
 </style>

@@ -10,6 +10,7 @@
     color: #f4f4f4;
     cursor: pointer;
     user-select: none;
+    max-width: 20%;
   }
   .isLoading {
     transform-origin: center;

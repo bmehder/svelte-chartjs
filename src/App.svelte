@@ -121,6 +121,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /* flex-wrap: wrap; */
     gap: 1rem;
     padding: 1.5rem;
     background-color: #323232;

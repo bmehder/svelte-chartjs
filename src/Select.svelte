@@ -21,4 +21,9 @@
     cursor: pointer;
     user-select: none;
   }
+  @media screen and (max-width: 600px) {
+    select {
+      width: 20%;
+    }
+  }
 </style>
