@@ -5,14 +5,30 @@
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
 
+  //TODO: Local storage
+  // startDate
+  // endDate
+
   const today = new Date().toISOString().slice(0, 10)
 
   let startDate = '2021-07-18'
   let endDate = today
   let type = 'bar'
 
-  $: startDate
-  $: endDate
+  sessionStorage.getItem('chartType') &&
+    (type = sessionStorage.getItem('chartType'))
+
+  sessionStorage.getItem('startDate') &&
+    (startDate = sessionStorage.getItem('startDate'))
+
+  sessionStorage.getItem('endDate') &&
+    (endDate = sessionStorage.getItem('endDate'))
+
+  $: sessionStorage.setItem('chartType', type)
+  $: sessionStorage.setItem('startDate', startDate)
+  $: sessionStorage.setItem('endDate', endDate)
+
+  $: endDate > today && (endDate = today)
 
   let apiRoute = () => {
     return `api/get.json?startDate=${startDate}&endDate=${endDate}`
@@ -27,17 +43,28 @@
     data: fetchedData,
   }
 
+  const isValidDateRange = () => endDate > startDate
+
+  const showInvalidDateMessage = () =>
+    alert(
+      'The end date is before the starting date, and I my T.A.R.D.I.S. is in the shop. 🤡'
+    )
+
   const getData = async url => {
-    isLoading = true
+    if (isValidDateRange()) {
+      isLoading = true
 
-    const res = await fetch(url)
-    !res.ok && (isLoading = false)
+      const res = await fetch(url)
+      !res.ok && (isLoading = false)
 
-    const data = await res.json()
+      const data = await res.json()
 
-    fetchedData = data
+      fetchedData = data
 
-    isLoading = false
+      isLoading = false
+      return
+    }
+    showInvalidDateMessage()
   }
 
   const printToConsole = () => {
@@ -54,8 +81,6 @@
 
   const refreshData = () => getData(apiRoute()).then(() => printToConsole())
 </script>
-
-<svelte:window on:keypress={e => e.key === 'Enter' && refreshData()} />
 
 <main class:dark={isDarkMode}>
   {#await promise}
@@ -74,6 +99,8 @@
   <Refresher on:click={refreshData} {isLoading} />
 </footer>
 
+<svelte:window on:keypress={e => e.key === 'Enter' && refreshData()} />
+
 <style>
   main {
     height: 85vh;
@@ -81,10 +108,8 @@
     place-items: center;
     padding: 0 2rem;
     background: white;
-  }
-  p {
-    font-size: 10vw;
     text-align: center;
+    font-size: 10vw;
   }
   footer {
     height: 15vh;
