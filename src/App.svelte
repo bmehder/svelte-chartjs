@@ -5,10 +5,6 @@
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
 
-  //TODO: Local storage
-  // startDate
-  // endDate
-
   const today = new Date().toISOString().slice(0, 10)
 
   let startDate = '2021-07-18'
@@ -47,7 +43,7 @@
 
   const showInvalidDateMessage = () =>
     alert(
-      'The end date is before the starting date, and I my T.A.R.D.I.S. is in the shop. 🤡'
+      'The end date is before the start date, and I my T.A.R.D.I.S. is in the shop. 🤡'
     )
 
   const getData = async url => {

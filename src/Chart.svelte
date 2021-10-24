@@ -1,9 +1,13 @@
 <script context="module">
   import Chart from 'chart.js/auto'
+  import { scale } from 'svelte/transition'
 </script>
 
 <script>
   export let config
+
+  let canvasEl
+  let dataURL
 
   const handleChart = (element, config) => {
     let theChart = new Chart(element, config)
@@ -18,12 +22,25 @@
       },
     }
   }
+
+  const saveChart = () => (dataURL = canvasEl?.toDataURL())
 </script>
 
-<canvas use:handleChart={config} />
+<canvas bind:this={canvasEl} use:handleChart={config} on:dblclick={saveChart} />
+
+{#if dataURL}
+  <aside transition:scale>
+    <input value={dataURL} />
+    <button on:click={() => (dataURL = null)}>X</button>
+  </aside>
+{/if}
 
 <style>
   canvas {
     max-height: 80vh;
+  }
+  input,
+  button {
+    padding: 1rem;
   }
 </style>
