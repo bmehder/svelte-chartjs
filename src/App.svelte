@@ -1,5 +1,5 @@
 <script>
-  import { types } from './types'
+  import { chartTypes } from './chartTypes'
   import { reports } from './reports'
 
   import Spinner from './Spinner.svelte'
@@ -12,14 +12,14 @@
 
   let startDate = '2021-07-18'
   let endDate = today
-  let type = 'bar'
+  let chartType = 'bar'
   let report = 'report-1'
 
   sessionStorage.getItem('report') &&
     (report = sessionStorage.getItem('report'))
 
   sessionStorage.getItem('chartType') &&
-    (type = sessionStorage.getItem('chartType'))
+    (chartType = sessionStorage.getItem('chartType'))
 
   sessionStorage.getItem('startDate') &&
     (startDate = sessionStorage.getItem('startDate'))
@@ -28,7 +28,7 @@
     (endDate = sessionStorage.getItem('endDate'))
 
   $: sessionStorage.setItem('report', report)
-  $: sessionStorage.setItem('chartType', type)
+  $: sessionStorage.setItem('chartType', chartType)
   $: sessionStorage.setItem('startDate', startDate)
   $: sessionStorage.setItem('endDate', endDate)
 
@@ -43,7 +43,7 @@
   let isDarkMode = false
 
   $: config = {
-    type,
+    type: chartType,
     data: fetchedData,
   }
 
@@ -55,20 +55,30 @@
     )
 
   const getData = async url => {
-    if (isValidDateRange()) {
-      isLoading = true
+    if (!isValidDateRange()) {
+      showInvalidDateMessage()
+      return
+    }
 
+    isLoading = true
+
+    try {
       const res = await fetch(url)
-      !res.ok && (isLoading = false)
+
+      if (!res.ok) {
+        isLoading = false
+        return
+      }
 
       const data = await res.json()
 
       fetchedData = data
-
+    } catch (err) {
       isLoading = false
-      return
+      throw Error('Failed to fetch')
     }
-    showInvalidDateMessage()
+
+    isLoading = false
   }
 
   const printToConsole = () => {
@@ -98,7 +108,7 @@
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
   <Select bind:type={report} types={reports} on:change={refreshData} />
-  <Select bind:type {types} />
+  <Select bind:type={chartType} types={chartTypes} />
   <DatePicker bind:value={startDate} />
   <DatePicker bind:value={endDate} />
   <Refresher on:click={refreshData} {isLoading} />
