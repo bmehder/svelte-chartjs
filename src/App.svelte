@@ -1,4 +1,7 @@
 <script>
+  import { types } from './types'
+  import { reports } from './reports'
+
   import Spinner from './Spinner.svelte'
   import DatePicker from './DatePicker.svelte'
   import Select from './Select.svelte'
@@ -10,6 +13,10 @@
   let startDate = '2021-07-18'
   let endDate = today
   let type = 'bar'
+  let report = 'report-1'
+
+  sessionStorage.getItem('report') &&
+    (report = sessionStorage.getItem('report'))
 
   sessionStorage.getItem('chartType') &&
     (type = sessionStorage.getItem('chartType'))
@@ -20,6 +27,7 @@
   sessionStorage.getItem('endDate') &&
     (endDate = sessionStorage.getItem('endDate'))
 
+  $: sessionStorage.setItem('report', report)
   $: sessionStorage.setItem('chartType', type)
   $: sessionStorage.setItem('startDate', startDate)
   $: sessionStorage.setItem('endDate', endDate)
@@ -27,7 +35,7 @@
   $: endDate > today && (endDate = today)
 
   let apiRoute = () => {
-    return `api/get.json?startDate=${startDate}&endDate=${endDate}`
+    return `api/get.json?report=${report}&startDate=${startDate}&endDate=${endDate}`
   }
 
   let fetchedData = null
@@ -43,7 +51,7 @@
 
   const showInvalidDateMessage = () =>
     alert(
-      'The end date is before the start date, and I my T.A.R.D.I.S. is in the shop. 🤡'
+      'The end date is before the start date, and my T.A.R.D.I.S. is in the shop. 🤡'
     )
 
   const getData = async url => {
@@ -89,7 +97,8 @@
 </main>
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select bind:type />
+  <Select bind:type={report} types={reports} />
+  <Select bind:type {types} />
   <DatePicker bind:value={startDate} />
   <DatePicker bind:value={endDate} />
   <Refresher on:click={refreshData} {isLoading} />

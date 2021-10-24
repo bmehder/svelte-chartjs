@@ -1,6 +1,5 @@
 <script>
-  import { types } from './types'
-
+  export let types
   export let type
 </script>
 
