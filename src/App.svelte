@@ -83,12 +83,26 @@
 
   const printToConsole = () => {
     console.clear()
-    console.log('%c\nStart Date   End Date', 'font-weight: bold;')
-    console.log(startDate + '   ' + endDate + '\n\n')
-    console.log('%cRequest:', 'font-weight: bold;')
-    console.log(window.location.href + apiRoute() + '\n\n')
-    console.log('%cResponse:', 'font-weight: bold;')
-    console.log(JSON.stringify(fetchedData, null, 4))
+    queueMicrotask(
+      console.log.bind(
+        console,
+        '%c\nStart Date | End Date',
+        'font-weight: bold;'
+      )
+    )
+    queueMicrotask(
+      console.log.bind(console, startDate + '   ' + endDate + '\n\n')
+    )
+    queueMicrotask(console.log.bind(console, '%cRequest', 'font-weight: bold;'))
+    queueMicrotask(
+      console.log.bind(console, window.location.href + apiRoute() + '\n\n')
+    )
+    queueMicrotask(
+      console.log.bind(console, '%cResponse', 'font-weight: bold;')
+    )
+    queueMicrotask(
+      console.log.bind(console, JSON.stringify(fetchedData, null, 4))
+    )
   }
 
   const promise = getData(apiRoute()).then(() => printToConsole())
