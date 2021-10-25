@@ -1,10 +1,10 @@
 <script>
-  export let types
-  export let type
+  export let options
+  export let value
 </script>
 
-<select bind:value={type} on:change>
-  {#each types as { value, name }}
+<select bind:value on:change>
+  {#each options as { value, name }}
     <option {value}>{name}</option>
   {/each}
 </select>

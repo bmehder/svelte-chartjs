@@ -36,20 +36,19 @@
 
   $: endDate > today && (endDate = today)
 
-  const apiRoute = () => {
-    return `api/get.json?report=${report}&startDate=${startDate}&endDate=${endDate}`
-  }
+  const isValidDateRange = () => endDate > startDate
+
+  const getAPIRoute = () =>
+    `api/get.json?report=${report}&startDate=${startDate}&endDate=${endDate}`
 
   let fetchedData = null
   let isLoading = false
   let isDarkMode = false
 
-  $: config = {
+  $: chartConfig = {
     type: chartType,
     data: fetchedData,
   }
-
-  const isValidDateRange = () => endDate > startDate
 
   const showInvalidDateMessage = () =>
     alert('The end date is before the start date.')
@@ -84,34 +83,32 @@
   $: consoleData = {
     startDate,
     endDate,
-    apiRoute,
+    getAPIRoute,
     fetchedData,
   }
 
-  const promise = getData(apiRoute()).then(() => printToConsole(consoleData))
-
-  const refreshData = () =>
-    getData(apiRoute()).then(() => printToConsole(consoleData))
+  const makeAPIRequest = () =>
+    getData(getAPIRoute()).then(() => printToConsole(consoleData))
 </script>
 
-<svelte:window on:keypress={e => e.key === 'Enter' && refreshData()} />
+<svelte:window on:keypress={e => e.key === 'Enter' && makeAPIRequest()} />
 
 <main class:dark={isDarkMode}>
-  {#await promise}
+  {#await makeAPIRequest()}
     <Spinner />
   {:then _}
-    <Chart {config} />
+    <Chart config={chartConfig} />
   {:catch err}
     <p>💩<br />{err}</p>
   {/await}
 </main>
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select bind:type={report} types={reports} on:change={refreshData} />
-  <Select bind:type={chartType} types={chartTypes} />
+  <Select bind:value={report} options={reports} on:change={makeAPIRequest} />
+  <Select bind:value={chartType} options={chartTypes} />
   <DatePicker bind:value={startDate} />
   <DatePicker bind:value={endDate} />
-  <Refresher on:click={refreshData} {isLoading} />
+  <Refresher on:click={makeAPIRequest} {isLoading} />
 </footer>
 
 <style>

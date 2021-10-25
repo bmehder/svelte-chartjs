@@ -8,7 +8,10 @@ export const printToConsole = data => {
   )
   queueMicrotask(console.log.bind(console, '%cRequest', 'font-weight: bold;'))
   queueMicrotask(
-    console.log.bind(console, window.location.href + data.apiRoute() + '\n\n')
+    console.log.bind(
+      console,
+      window.location.href + data.getAPIRoute() + '\n\n'
+    )
   )
   queueMicrotask(console.log.bind(console, '%cResponse', 'font-weight: bold;'))
   queueMicrotask(
