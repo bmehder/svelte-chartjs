@@ -2,6 +2,8 @@
   import { chartTypes } from './chartTypes'
   import { reports } from './reports'
 
+  import { printToConsole } from './console'
+
   import Spinner from './Spinner.svelte'
   import DatePicker from './DatePicker.svelte'
   import Select from './Select.svelte'
@@ -34,7 +36,7 @@
 
   $: endDate > today && (endDate = today)
 
-  let apiRoute = () => {
+  const apiRoute = () => {
     return `api/get.json?report=${report}&startDate=${startDate}&endDate=${endDate}`
   }
 
@@ -50,9 +52,7 @@
   const isValidDateRange = () => endDate > startDate
 
   const showInvalidDateMessage = () =>
-    alert(
-      'The end date is before the start date, and my T.A.R.D.I.S. is in the shop. 🤡'
-    )
+    alert('The end date is before the start date.')
 
   const getData = async url => {
     if (!isValidDateRange()) {
@@ -81,34 +81,20 @@
     isLoading = false
   }
 
-  const printToConsole = () => {
-    console.clear()
-    queueMicrotask(
-      console.log.bind(
-        console,
-        '%c\nStart Date | End Date',
-        'font-weight: bold;'
-      )
-    )
-    queueMicrotask(
-      console.log.bind(console, startDate + '   ' + endDate + '\n\n')
-    )
-    queueMicrotask(console.log.bind(console, '%cRequest', 'font-weight: bold;'))
-    queueMicrotask(
-      console.log.bind(console, window.location.href + apiRoute() + '\n\n')
-    )
-    queueMicrotask(
-      console.log.bind(console, '%cResponse', 'font-weight: bold;')
-    )
-    queueMicrotask(
-      console.log.bind(console, JSON.stringify(fetchedData, null, 4))
-    )
+  $: consoleData = {
+    startDate,
+    endDate,
+    apiRoute,
+    fetchedData,
   }
 
-  const promise = getData(apiRoute()).then(() => printToConsole())
+  const promise = getData(apiRoute()).then(() => printToConsole(consoleData))
 
-  const refreshData = () => getData(apiRoute()).then(() => printToConsole())
+  const refreshData = () =>
+    getData(apiRoute()).then(() => printToConsole(consoleData))
 </script>
+
+<svelte:window on:keypress={e => e.key === 'Enter' && refreshData()} />
 
 <main class:dark={isDarkMode}>
   {#await promise}
@@ -127,8 +113,6 @@
   <DatePicker bind:value={endDate} />
   <Refresher on:click={refreshData} {isLoading} />
 </footer>
-
-<svelte:window on:keypress={e => e.key === 'Enter' && refreshData()} />
 
 <style>
   main {
