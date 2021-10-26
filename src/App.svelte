@@ -39,7 +39,7 @@
   const isValidDateRange = () => endDate > startDate
 
   const getAPIRoute = () =>
-    `?report=${report}&startDate=${startDate}&endDate=${endDate}`
+    `https://restoreosteo.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
   // `api/get.json?=${report}&startDate=${startDate}&endDate=${endDate}`
 
   let fetchedData = null
