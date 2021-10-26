@@ -63,7 +63,7 @@
 
     try {
       const res = await fetch(url)
-
+      console.log(res.url)
       if (!res.ok) {
         isLoading = false
         return
@@ -74,6 +74,7 @@
       fetchedData = data
     } catch (err) {
       isLoading = false
+      console.error(err)
       throw Error('Failed to fetch')
     }
 
