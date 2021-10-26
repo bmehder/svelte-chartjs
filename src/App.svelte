@@ -100,6 +100,9 @@
   {#await makeAPIRequest()}
     <Spinner />
   {:then _}
+    {#if fetchedData.length === 0}
+      <p>👎<br />No report yet</p>
+    {/if}
     <Chart config={chartConfig} />
   {:catch err}
     <p>💩<br />{err}</p>
