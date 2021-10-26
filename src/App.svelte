@@ -103,7 +103,9 @@
     {#if fetchedData.length === 0}
       <p>👎<br />No report yet</p>
     {/if}
-    <Chart config={chartConfig} />
+    {#if fetchedData.length > 0}
+      <Chart config={chartConfig} />
+    {/if}
   {:catch err}
     <p>💩<br />{err}</p>
   {/await}
