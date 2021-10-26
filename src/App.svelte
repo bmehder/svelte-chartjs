@@ -39,7 +39,7 @@
   const isValidDateRange = () => endDate > startDate
 
   const getAPIRoute = () =>
-    `api/get.json?report=${report}&startDate=${startDate}&endDate=${endDate}`
+    `?report=${report}&startDate=${startDate}&endDate=${endDate}`
 
   let fetchedData = null
   let isLoading = false
