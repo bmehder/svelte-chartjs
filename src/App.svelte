@@ -63,8 +63,8 @@
 
     try {
       const res = await fetch(url)
-      console.log(res.url)
       if (!res.ok) {
+        console.log(res.url)
         isLoading = false
         return
       }
