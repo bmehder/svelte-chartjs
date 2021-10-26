@@ -40,6 +40,7 @@
 
   const getAPIRoute = () =>
     `?report=${report}&startDate=${startDate}&endDate=${endDate}`
+  // `api/get.json?=${report}&startDate=${startDate}&endDate=${endDate}`
 
   let fetchedData = null
   let isLoading = false
@@ -63,6 +64,7 @@
 
     try {
       const res = await fetch(url)
+      console.log(res)
       if (!res.ok) {
         console.log(res.url)
         isLoading = false
