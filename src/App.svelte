@@ -49,9 +49,8 @@
   let isDarkMode = false
   let isShowTotal = false
 
-  $: totalAppointments = fetchedData?.datasets[0].data.reduce(
-    (total, next) => (total += next)
-  )
+  const totalAppointments = () =>
+    fetchedData?.datasets[0].data.reduce((total, next) => (total += next))
 
   $: chartConfig = {
     type: chartType,
@@ -113,7 +112,7 @@
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
       {#if isShowTotal}
         <aside transition:scale on:dblclick={() => (isShowTotal = false)}>
-          {totalAppointments}
+          {totalAppointments()}
         </aside>
       {/if}
       <Chart
