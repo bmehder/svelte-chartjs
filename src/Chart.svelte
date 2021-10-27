@@ -20,10 +20,10 @@
   }
 </script>
 
-<canvas use:handleChart={config} />
+<canvas use:handleChart={config} on:dblclick />
 
 <style>
   canvas {
-    max-height: 80vh;
+    max-height: 70vh;
   }
 </style>

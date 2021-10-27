@@ -2,6 +2,8 @@
   import { chartTypes } from './chartTypes'
   import { reports } from './reports'
 
+  import { scale } from 'svelte/transition'
+
   import { printToConsole } from './console'
 
   import Spinner from './Spinner.svelte'
@@ -45,6 +47,11 @@
   let fetchedData = null
   let isLoading = false
   let isDarkMode = false
+  let isShowTotal = false
+
+  $: totalAppointments = fetchedData?.datasets[0].data.reduce(
+    (total, next) => (total += next)
+  )
 
   $: chartConfig = {
     type: chartType,
@@ -104,10 +111,15 @@
       <p>👎<br />No report yet</p>
     {/if}
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
-      <aside>
-        {fetchedData.datasets[0].data.reduce((total, next) => (total += next))}
-      </aside>
-      <Chart config={chartConfig} />
+      {#if isShowTotal}
+        <aside transition:scale on:dblclick={() => (isShowTotal = false)}>
+          {totalAppointments}
+        </aside>
+      {/if}
+      <Chart
+        config={chartConfig}
+        on:dblclick={() => (isShowTotal = !isShowTotal)}
+      />
     {/if}
   {:catch err}
     <p>💩<br />{err}</p>
@@ -135,6 +147,7 @@
 
   aside {
     position: absolute;
+    user-select: none;
   }
 
   footer {
