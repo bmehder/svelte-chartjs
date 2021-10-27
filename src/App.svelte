@@ -103,7 +103,7 @@
     {#if fetchedData.length === 0}
       <p>👎<br />No report yet</p>
     {/if}
-    {#if fetchedData}
+    {#if fetchedData && Object.keys(fetchedData).length !== 0}
       <Chart config={chartConfig} />
     {/if}
   {:catch err}
@@ -129,6 +129,7 @@
     text-align: center;
     font-size: 10vw;
   }
+
   footer {
     height: 15vh;
     display: flex;
