@@ -104,6 +104,9 @@
       <p>👎<br />No report yet</p>
     {/if}
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
+      <aside>
+        {fetchedData.datasets[0].data.reduce((total, next) => (total += next))}
+      </aside>
       <Chart config={chartConfig} />
     {/if}
   {:catch err}
@@ -128,6 +131,10 @@
     background: white;
     text-align: center;
     font-size: 10vw;
+  }
+
+  aside {
+    position: absolute;
   }
 
   footer {
