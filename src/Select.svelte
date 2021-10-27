@@ -1,6 +1,6 @@
 <script>
-  export let options
-  export let value
+  export let options = null
+  export let value = null
 </script>
 
 <select bind:value on:change>

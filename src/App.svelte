@@ -1,10 +1,8 @@
 <script>
   import { chartTypes } from './chartTypes'
   import { reports } from './reports'
-
-  import { scale } from 'svelte/transition'
-
   import { printToConsole } from './console'
+  import { scale } from 'svelte/transition'
 
   import Spinner from './Spinner.svelte'
   import DatePicker from './DatePicker.svelte'
@@ -38,47 +36,39 @@
 
   $: endDate > today && (endDate = today)
 
-  const isValidDateRange = () => endDate > startDate
+  $: endPoint = `https://restoreosteo.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
 
-  const getAPIRoute = () =>
-    `https://restoreosteo.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
-  // `api/get.json?=${report}&startDate=${startDate}&endDate=${endDate}`
-
-  let fetchedData = null
   let isLoading = false
   let isDarkMode = false
   let isShowTotal = false
+  let fetchedData = null
 
-  const totalAppointments = () =>
-    fetchedData?.datasets[0].data.reduce((total, next) => (total += next))
+  const totalAppointments = (node, fetchedData) =>
+    (node.textContent = fetchedData.datasets[0].data.reduce(
+      (total, next) => (total += next)
+    ))
 
   $: chartConfig = {
     type: chartType,
     data: fetchedData,
   }
 
-  const showInvalidDateMessage = () =>
-    alert('The end date is before the start date.')
+  const isInvalidDateRange = () => {
+    if (endDate < startDate) {
+      alert('The end date cannot be before the start date.')
+      return false
+    }
+  }
 
   const getData = async url => {
-    if (!isValidDateRange()) {
-      showInvalidDateMessage()
-      return
-    }
+    if (isInvalidDateRange()) return
 
+    isShowTotal = false
     isLoading = true
 
     try {
       const res = await fetch(url)
-      console.log(res)
-      if (!res.ok) {
-        console.log(res.url)
-        isLoading = false
-        return
-      }
-
       const data = await res.json()
-
       fetchedData = data
     } catch (err) {
       isLoading = false
@@ -92,12 +82,12 @@
   $: consoleData = {
     startDate,
     endDate,
-    getAPIRoute,
+    endPoint,
     fetchedData,
   }
 
   const makeAPIRequest = () =>
-    getData(getAPIRoute()).then(() => printToConsole(consoleData))
+    getData(endPoint).then(() => printToConsole(consoleData))
 </script>
 
 <svelte:window on:keypress={e => e.key === 'Enter' && makeAPIRequest()} />
@@ -106,18 +96,22 @@
   {#await makeAPIRequest()}
     <Spinner />
   {:then _}
-    {#if fetchedData.length === 0}
+    {#if fetchedData?.length === 0}
       <p>👎<br />No report yet</p>
     {/if}
+
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
-      {#if isShowTotal}
-        <aside transition:scale on:dblclick={() => (isShowTotal = false)}>
-          {totalAppointments()}
-        </aside>
-      {/if}
       <Chart
         config={chartConfig}
         on:dblclick={() => (isShowTotal = !isShowTotal)}
+      />
+    {/if}
+
+    {#if isShowTotal}
+      <aside
+        use:totalAppointments={fetchedData}
+        transition:scale
+        on:dblclick={() => (isShowTotal = false)}
       />
     {/if}
   {:catch err}
