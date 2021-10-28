@@ -18,6 +18,7 @@
   let endDate = today
   let chartType = 'bar'
   let report = 'report-1'
+  let domain = 'restoreosteo'
   let isLoading = false
   let isDarkMode = false
   let isShowTotal = false
@@ -36,7 +37,9 @@
     fetchedData,
   }
 
-  $: endPoint = `https://restoreosteo.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
+  $: domain = report === 'report-2' ? 'restoreosteo' : 'restoreosteo'
+
+  $: endPoint = `https://${domain}.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
 
   // Getters for chart settings in session storage
   sessionStorage.getItem('report') &&
@@ -83,7 +86,6 @@
       fetchedData = data
     } catch (err) {
       isLoading = false
-      console.error(err)
       throw new Error(err)
     }
 
