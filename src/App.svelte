@@ -51,15 +51,11 @@
   sessionStorage.getItem('endDate') &&
     (endDate = sessionStorage.getItem('endDate'))
 
-  sessionStorage.getItem('isDarkMode') &&
-    (isDarkMode = sessionStorage.getItem('isDarkMode'))
-
   // Setters for chart settings in session storage
   $: sessionStorage.setItem('report', report)
   $: sessionStorage.setItem('chartType', chartType)
   $: sessionStorage.setItem('startDate', startDate)
   $: sessionStorage.setItem('endDate', endDate)
-  $: sessionStorage.setItem('isDarkMode', isDarkMode)
 
   // Keep dates within a logical range
   $: startDate < '2021-07-18' && (startDate = '2021-07-18')
