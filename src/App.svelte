@@ -104,7 +104,12 @@
     }
   }
 
-  // Event handler for page load, enter key, refresh btn, and report change
+  // Event handlers for page load, enter key, refresh btn, and report change
+  const handleOnChange = () => {
+    isShowTotal = false
+    makeAPIRequest()
+  }
+
   const makeAPIRequest = () =>
     getData(endPoint).then(() => printToConsole(consoleData))
 </script>
@@ -141,7 +146,7 @@
 </main>
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select bind:value={report} options={reports} on:change={makeAPIRequest} />
+  <Select bind:value={report} options={reports} on:change={handleOnChange} />
   <Select bind:value={chartType} options={chartTypes} />
   <DatePicker bind:value={startDate} />
   <DatePicker bind:value={endDate} />
