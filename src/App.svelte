@@ -75,7 +75,6 @@
   const getData = async url => {
     if (isInvalidDateRange()) return
 
-    isShowTotal = false
     isLoading = true
 
     try {
@@ -92,13 +91,20 @@
   }
 
   // Action
-  const getSumOfAllApointments = () => {
+  const getSumOfAllApointments = (node, fetchedData) => {
     totalAppointments = fetchedData.datasets[0].data.reduce(
       (total, next) => (total += next)
     )
+    return {
+      update(fetchedData) {
+        totalAppointments = fetchedData.datasets[0].data.reduce(
+          (total, next) => (total += next)
+        )
+      },
+    }
   }
 
-  // Event handler for page load, enter key, and report change
+  // Event handler for page load, enter key, refresh btn, and report change
   const makeAPIRequest = () =>
     getData(endPoint).then(() => printToConsole(consoleData))
 </script>
@@ -122,7 +128,7 @@
 
     {#if isShowTotal}
       <aside
-        use:getSumOfAllApointments
+        use:getSumOfAllApointments={fetchedData}
         transition:scale
         on:dblclick={() => (isShowTotal = false)}
       >
