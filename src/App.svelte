@@ -1,22 +1,44 @@
 <script>
+  // Data structures, util and transition functions
   import { chartTypes } from './chartTypes'
   import { reports } from './reports'
   import { printToConsole } from './console'
   import { scale } from 'svelte/transition'
 
+  // Svelte components
   import Spinner from './Spinner.svelte'
   import DatePicker from './DatePicker.svelte'
   import Select from './Select.svelte'
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
 
+  // App state
   const today = new Date().toISOString().slice(0, 10)
-
   let startDate = '2021-07-18'
   let endDate = today
   let chartType = 'bar'
   let report = 'report-1'
+  let isLoading = false
+  let isDarkMode = false
+  let isShowTotal = false
+  let fetchedData = null
+  let totalAppointments = 0
 
+  $: chartConfig = {
+    type: chartType,
+    data: fetchedData,
+  }
+
+  $: consoleData = {
+    startDate,
+    endDate,
+    endPoint,
+    fetchedData,
+  }
+
+  $: endPoint = `https://restoreosteo.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
+
+  // Getters for chart settings in session storage
   sessionStorage.getItem('report') &&
     (report = sessionStorage.getItem('report'))
 
@@ -29,37 +51,31 @@
   sessionStorage.getItem('endDate') &&
     (endDate = sessionStorage.getItem('endDate'))
 
+  sessionStorage.getItem('isDarkMode') &&
+    (isDarkMode = sessionStorage.getItem('isDarkMode'))
+
+  // Setters for chart settings in session storage
   $: sessionStorage.setItem('report', report)
   $: sessionStorage.setItem('chartType', chartType)
   $: sessionStorage.setItem('startDate', startDate)
   $: sessionStorage.setItem('endDate', endDate)
+  $: sessionStorage.setItem('isDarkMode', isDarkMode)
 
+  // Keep dates within a logical range
+  $: startDate < '2021-07-18' && (startDate = '2021-07-18')
+  $: endDate < '2021-07-18' && (endDate = '2021-07-18')
+  $: startDate > today && (startDate = today)
   $: endDate > today && (endDate = today)
 
-  $: endPoint = `https://restoreosteo.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
-
-  let isLoading = false
-  let isDarkMode = false
-  let isShowTotal = false
-  let fetchedData = null
-
-  const totalAppointments = (node, fetchedData) =>
-    (node.textContent = fetchedData.datasets[0].data.reduce(
-      (total, next) => (total += next)
-    ))
-
-  $: chartConfig = {
-    type: chartType,
-    data: fetchedData,
-  }
-
+  // Predicate
   const isInvalidDateRange = () => {
     if (endDate < startDate) {
       alert('The end date cannot be before the start date.')
-      return false
+      return true
     }
   }
 
+  // API request
   const getData = async url => {
     if (isInvalidDateRange()) return
 
@@ -73,19 +89,20 @@
     } catch (err) {
       isLoading = false
       console.error(err)
-      throw Error('Failed to fetch')
+      throw new Error(err)
     }
 
     isLoading = false
   }
 
-  $: consoleData = {
-    startDate,
-    endDate,
-    endPoint,
-    fetchedData,
+  // Action
+  const getSumOfAllApointments = () => {
+    totalAppointments = fetchedData.datasets[0].data.reduce(
+      (total, next) => (total += next)
+    )
   }
 
+  // Event handler for page load, enter key, and report change
   const makeAPIRequest = () =>
     getData(endPoint).then(() => printToConsole(consoleData))
 </script>
@@ -109,13 +126,15 @@
 
     {#if isShowTotal}
       <aside
-        use:totalAppointments={fetchedData}
+        use:getSumOfAllApointments
         transition:scale
         on:dblclick={() => (isShowTotal = false)}
-      />
+      >
+        {totalAppointments}
+      </aside>
     {/if}
   {:catch err}
-    <p>💩<br />{err}</p>
+    <p>💩<br /><span>Don't panic!</span><br />{err.message}</p>
   {/await}
 </main>
 
@@ -141,6 +160,24 @@
   aside {
     position: absolute;
     user-select: none;
+  }
+
+  span {
+    color: red;
+    font-weight: 900;
+    animation: blink 1s 3 forwards;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 
   footer {
