@@ -123,7 +123,7 @@
     <Spinner />
   {:then _}
     {#if fetchedData?.length === 0}
-      <p>👎<br />No report yet</p>
+      <p>👎<br /><span>No report</span></p>
     {/if}
 
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
@@ -174,19 +174,6 @@
   span {
     color: red;
     font-weight: 900;
-    animation: blink 1s 3 forwards;
-  }
-
-  @keyframes blink {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
   }
 
   footer {
