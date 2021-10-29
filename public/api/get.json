@@ -1,28 +1,82 @@
 {
-  "labels": [
-    "Aurora",
-    "Goldon",
-    "Thornton",
-    "Colorado Springs"
-  ],
-  "datasets": [
-    {
-      "label": "Appointment Requests (by location)",
-      "backgroundColor": [
-        "#3e95cd",
-        "#8e5ea2",
-        "#3cba9f",
-        "#e8c3b9"
-      ],
-      "data": [
-        42,
-        32,
-        23,
-        52
-      ],
-      "tension": 0.32,
-      "borderWidth": 1,
-      "fill": true
-    }
-  ]
+    "labels": [
+        "July",
+        "August",
+        "September",
+        "October"
+    ],
+    "datasets": [
+        {
+            "label": "Aurora",
+            "backgroundColor": [
+                "#3e95cd",
+                "#3e95cd",
+                "#3e95cd",
+                "#3e95cd"
+            ],
+            "data": [
+                3,
+                7,
+                1,
+                8
+            ],
+            "tension": 0.32,
+            "borderWidth": 1,
+            "fill": true
+        },
+        {
+            "label": "Thornton",
+            "backgroundColor": [
+                "#8e5ea2",
+                "#8e5ea2",
+                "#8e5ea2",
+                "#8e5ea2"
+            ],
+            "data": [
+                0,
+                5,
+                3,
+                10
+            ],
+            "tension": 0.32,
+            "borderWidth": 1,
+            "fill": true
+        },
+        {
+            "label": "Golden",
+            "backgroundColor": [
+                "#3cba9f",
+                "#3cba9f",
+                "#3cba9f",
+                "#3cba9f"
+            ],
+            "data": [
+                0,
+                1,
+                4,
+                4
+            ],
+            "tension": 0.32,
+            "borderWidth": 1,
+            "fill": true
+        },
+        {
+            "label": "Colorado Springs",
+            "backgroundColor": [
+                "#e8c3b9",
+                "#e8c3b9",
+                "#e8c3b9",
+                "#e8c3b9"
+            ],
+            "data": [
+                0,
+                0,
+                0,
+                8
+            ],
+            "tension": 0.32,
+            "borderWidth": 1,
+            "fill": true
+        }
+    ]
 }
