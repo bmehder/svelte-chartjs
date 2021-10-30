@@ -40,8 +40,8 @@
 
   $: domain = report === 'report-2' ? 'restoreosteo' : 'restoreosteo'
 
-  // $: endPoint = `https://${domain}.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
-  $: endPoint = `api/get.json`
+  $: endPoint = `https://${domain}.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
+  // $: endPoint = `api/get.json`
 
   // Getters for chart settings in session storage
   sessionStorage.getItem('report') &&
