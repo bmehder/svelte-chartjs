@@ -24,6 +24,7 @@
   let isShowTotal = false
   let fetchedData = null
   let totalAppointments = 0
+  let totalAppointmentsByMonth = []
 
   $: chartConfig = {
     type: chartType,
@@ -107,8 +108,18 @@
     }
   }
 
+  // $: totalAppointmentsByMonth =
+  //   report === 'report-3' &&
+  //   fetchedData?.datasets.map(dataset => {
+  //     return dataset.data.reduce((total, next) => (total += next))
+  //   })
+
+  // $: sumOfAllTotalAppointmentsByMonth =
+  //   report === 'report-3' &&
+  //   totalAppointmentsByMonth?.reduce((total, next) => (total += next))
+
   // Event handlers for page load, enter key, refresh btn, and report change
-  const handleOnChange = () => {
+  const handleReportChange = () => {
     isShowTotal = false
     makeAPIRequest()
   }
@@ -135,13 +146,22 @@
     {/if}
 
     {#if isShowTotal}
-      <aside
-        use:getSumOfAllApointments={fetchedData}
-        transition:scale
-        on:dblclick={() => (isShowTotal = false)}
-      >
-        {totalAppointments}
-      </aside>
+      {#if report !== 'report-3'}
+        <aside
+          use:getSumOfAllApointments={fetchedData}
+          on:dblclick={() => (isShowTotal = false)}
+          transition:scale
+        >
+          {totalAppointments}
+        </aside>
+      {/if}
+      <!-- {#if report === 'report-3'}
+        <div transition:scale>
+          {#each totalAppointmentsByMonth as item}
+            <li>{item}</li>
+          {/each}
+        </div>
+      {/if} -->
     {/if}
   {:catch err}
     <p>💩<br /><span>Don't panic!</span><br />{err.message}</p>
@@ -149,13 +169,20 @@
 </main>
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select bind:value={report} options={reports} on:change={handleOnChange} />
+  <Select
+    bind:value={report}
+    options={reports}
+    on:change={handleReportChange}
+  />
   <Select bind:value={chartType} options={chartTypes} />
   {#if report !== 'report-3'}
     <DatePicker bind:value={startDate} />
     <DatePicker bind:value={endDate} />
   {/if}
   <Refresher on:click={makeAPIRequest} {isLoading} />
+  <!-- {#if report === 'report-3'}
+    <p>Total: {sumOfAllTotalAppointmentsByMonth}</p>
+  {/if} -->
 </footer>
 
 <style>
@@ -174,6 +201,17 @@
     user-select: none;
   }
 
+  div {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.5em;
+  }
+
+  li {
+    list-style-type: none;
+  }
+
   span {
     color: red;
     font-weight: 900;
@@ -187,7 +225,13 @@
     gap: 1rem;
     padding: 1.5rem;
     background-color: #323232;
+    color: white;
   }
+
+  footer p {
+    font-size: 2em;
+  }
+
   .dark {
     background-color: #424242;
   }
