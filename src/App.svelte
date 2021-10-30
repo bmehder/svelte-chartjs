@@ -20,11 +20,11 @@
   let report = 'report-1'
   let domain = 'restoreosteo'
   let isLoading = false
-  let isDarkMode = false
   let isShowTotal = false
+  let isDarkMode = false
   let fetchedData = null
   let totalAppointments = 0
-  let totalAppointmentsByMonth = []
+  let totalAppointmentsByMonth = 0
 
   $: chartConfig = {
     type: chartType,
@@ -40,8 +40,8 @@
 
   $: domain = report === 'report-2' ? 'restoreosteo' : 'restoreosteo'
 
-  $: endPoint = `https://${domain}.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
-  // $: endPoint = `api/get.json`
+  // $: endPoint = `https://${domain}.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
+  $: endPoint = `api/get.json`
 
   // Getters for chart settings in session storage
   sessionStorage.getItem('report') &&
@@ -67,6 +67,26 @@
   $: endDate < '2021-07-18' && (endDate = '2021-07-18')
   $: startDate > today && (startDate = today)
   $: endDate > today && (endDate = today)
+
+  const getTotalAppointmentsByMonth = () => {
+    let totalAppointmentsByMonth = []
+    for (let i = 0; i < fetchedData.datasets.length; i++) {
+      totalAppointmentsByMonth = [
+        ...totalAppointmentsByMonth,
+        fetchedData.datasets
+          .map(dataset => dataset.data)
+          .map(data => data[i])
+          .reduce((total, next) => (total += next)),
+      ]
+    }
+    return totalAppointmentsByMonth
+  }
+
+  const sumMonthlyAppointments = () => {
+    totalAppointmentsByMonth = totalAppointments.reduce(
+      (total, next) => (total += next)
+    )
+  }
 
   // Predicate
   const isInvalidDateRange = () => {
@@ -96,36 +116,30 @@
 
   // Action
   const getSumOfAllApointments = (node, fetchedData) => {
-    totalAppointments = fetchedData.datasets[0].data.reduce(
-      (total, next) => (total += next)
-    )
+    totalAppointments = fetchedData.datasets.map(dataset => {
+      return dataset.data.reduce((total, next) => (total += next))
+    })
+    sumMonthlyAppointments()
     return {
       update(fetchedData) {
-        totalAppointments = fetchedData.datasets[0].data.reduce(
-          (total, next) => (total += next)
-        )
+        totalAppointments = fetchedData.datasets.map(dataset => {
+          return dataset.data.reduce((total, next) => (total += next))
+        })
       },
+      onDestroy() {},
     }
   }
 
-  // $: totalAppointmentsByMonth =
-  //   report === 'report-3' &&
-  //   fetchedData?.datasets.map(dataset => {
-  //     return dataset.data.reduce((total, next) => (total += next))
-  //   })
-
-  // $: sumOfAllTotalAppointmentsByMonth =
-  //   report === 'report-3' &&
-  //   totalAppointmentsByMonth?.reduce((total, next) => (total += next))
-
   // Event handlers for page load, enter key, refresh btn, and report change
-  const handleReportChange = () => {
-    isShowTotal = false
-    makeAPIRequest()
-  }
+  // const handleReportChange = () => {
+  //   isShowTotal = false
+  //   makeAPIRequest()
+  // }
 
-  const makeAPIRequest = () =>
+  const makeAPIRequest = () => {
+    isShowTotal = false
     getData(endPoint).then(() => printToConsole(consoleData))
+  }
 </script>
 
 <svelte:window on:keypress={e => e.key === 'Enter' && makeAPIRequest()} />
@@ -144,24 +158,18 @@
         on:dblclick={() => (isShowTotal = !isShowTotal)}
       />
     {/if}
-
     {#if isShowTotal}
-      {#if report !== 'report-3'}
-        <aside
-          use:getSumOfAllApointments={fetchedData}
-          on:dblclick={() => (isShowTotal = false)}
-          transition:scale
-        >
-          {totalAppointments}
-        </aside>
-      {/if}
-      <!-- {#if report === 'report-3'}
-        <div transition:scale>
-          {#each totalAppointmentsByMonth as item}
-            <li>{item}</li>
-          {/each}
-        </div>
-      {/if} -->
+      <aside
+        class:none={report !== 'report-3'}
+        use:getSumOfAllApointments={fetchedData}
+        transition:scale
+      >
+        {#each getTotalAppointmentsByMonth() as totalAppointmentsByMonth}
+          {#if report === 'report-3'}
+            <li>{totalAppointmentsByMonth}</li>
+          {/if}
+        {/each}
+      </aside>
     {/if}
   {:catch err}
     <p>💩<br /><span>Don't panic!</span><br />{err.message}</p>
@@ -169,20 +177,16 @@
 </main>
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select
-    bind:value={report}
-    options={reports}
-    on:change={handleReportChange}
-  />
+  <Select bind:value={report} options={reports} on:change={makeAPIRequest} />
   <Select bind:value={chartType} options={chartTypes} />
   {#if report !== 'report-3'}
     <DatePicker bind:value={startDate} />
     <DatePicker bind:value={endDate} />
   {/if}
   <Refresher on:click={makeAPIRequest} {isLoading} />
-  <!-- {#if report === 'report-3'}
-    <p>Total: {sumOfAllTotalAppointmentsByMonth}</p>
-  {/if} -->
+  {#if isShowTotal}
+    <p transition:scale>{'Total: ' + totalAppointmentsByMonth}</p>
+  {/if}
 </footer>
 
 <style>
@@ -197,15 +201,11 @@
   }
 
   aside {
-    position: absolute;
-    user-select: none;
-  }
-
-  div {
     width: 100%;
     display: flex;
     justify-content: space-around;
     font-size: 0.5em;
+    user-select: none;
   }
 
   li {
@@ -229,11 +229,15 @@
   }
 
   footer p {
-    font-size: 2em;
+    font-size: 2rem;
   }
 
   .dark {
     background-color: #424242;
+  }
+
+  .none {
+    display: none;
   }
 
   :global(*) {
