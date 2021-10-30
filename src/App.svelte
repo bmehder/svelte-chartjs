@@ -20,7 +20,6 @@
   let report = 'report-1'
   let domain = 'restoreosteo'
   let isLoading = false
-  let isShowTotal = false
   let isDarkMode = false
   let fetchedData = null
   let totalAppointments = 0
@@ -68,26 +67,6 @@
   $: startDate > today && (startDate = today)
   $: endDate > today && (endDate = today)
 
-  const getTotalAppointmentsByMonth = () => {
-    let totalAppointmentsByMonth = []
-    for (let i = 0; i < fetchedData.datasets.length; i++) {
-      totalAppointmentsByMonth = [
-        ...totalAppointmentsByMonth,
-        fetchedData.datasets
-          .map(dataset => dataset.data)
-          .map(data => data[i])
-          .reduce((total, next) => (total += next)),
-      ]
-    }
-    return totalAppointmentsByMonth
-  }
-
-  const sumMonthlyAppointments = () => {
-    totalAppointmentsByMonth = totalAppointments.reduce(
-      (total, next) => (total += next)
-    )
-  }
-
   // Predicate
   const isInvalidDateRange = () => {
     if (endDate < startDate) {
@@ -114,15 +93,30 @@
     isLoading = false
   }
 
-  // Action
+  const getTotalAppointmentsByMonth = () => {
+    let totalAppointmentsByMonth = []
+
+    for (let i = 0; i < fetchedData.datasets?.length; i++) {
+      totalAppointmentsByMonth = [
+        ...totalAppointmentsByMonth,
+        fetchedData.datasets
+          .map(dataset => dataset.data)
+          .map(data => data[i])
+          .reduce((total, next) => (total += next)),
+      ]
+    }
+    return totalAppointmentsByMonth
+  }
+
+  // Actions
   const getSumOfAllApointments = (node, fetchedData) => {
-    totalAppointments = fetchedData.datasets.map(dataset => {
+    totalAppointments = fetchedData.datasets?.map(dataset => {
       return dataset.data.reduce((total, next) => (total += next))
     })
-    sumMonthlyAppointments()
+
     return {
       update(fetchedData) {
-        totalAppointments = fetchedData.datasets.map(dataset => {
+        totalAppointments = fetchedData.datasets?.map(dataset => {
           return dataset.data.reduce((total, next) => (total += next))
         })
       },
@@ -130,14 +124,20 @@
     }
   }
 
-  // Event handlers for page load, enter key, refresh btn, and report change
-  // const handleReportChange = () => {
-  //   isShowTotal = false
-  //   makeAPIRequest()
-  // }
+  const sumMonthlyAppointments = (node, fetchedData) => {
+    totalAppointmentsByMonth = totalAppointments?.reduce(
+      (total, next) => (total += next)
+    )
+    return {
+      update(fetchedData) {
+        totalAppointmentsByMonth = totalAppointments?.reduce(
+          (total, next) => (total += next)
+        )
+      },
+    }
+  }
 
   const makeAPIRequest = () => {
-    isShowTotal = false
     getData(endPoint).then(() => printToConsole(consoleData))
   }
 </script>
@@ -153,22 +153,16 @@
     {/if}
 
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
-      <Chart
-        config={chartConfig}
-        on:dblclick={() => (isShowTotal = !isShowTotal)}
-      />
+      <Chart config={chartConfig} />
     {/if}
-    {#if isShowTotal}
-      <aside
-        class:none={report !== 'report-3'}
-        use:getSumOfAllApointments={fetchedData}
-        transition:scale
-      >
-        {#each getTotalAppointmentsByMonth() as totalAppointmentsByMonth}
-          {#if report === 'report-3'}
-            <li>{totalAppointmentsByMonth}</li>
-          {/if}
-        {/each}
+
+    {#if fetchedData}
+      <aside use:getSumOfAllApointments={fetchedData} transition:scale>
+        {#if report === 'report-3'}
+          {#each getTotalAppointmentsByMonth() as totals}
+            <li>{totals}</li>
+          {/each}
+        {/if}
       </aside>
     {/if}
   {:catch err}
@@ -184,8 +178,12 @@
     <DatePicker bind:value={endDate} />
   {/if}
   <Refresher on:click={makeAPIRequest} {isLoading} />
-  {#if isShowTotal}
-    <p transition:scale>{'Total: ' + totalAppointmentsByMonth}</p>
+  {#if fetchedData}
+    <p use:sumMonthlyAppointments={fetchedData} transition:scale>
+      {#if totalAppointmentsByMonth}
+        {'Total: ' + totalAppointmentsByMonth}
+      {/if}
+    </p>
   {/if}
 </footer>
 
@@ -234,10 +232,6 @@
 
   .dark {
     background-color: #424242;
-  }
-
-  .none {
-    display: none;
   }
 
   :global(*) {
