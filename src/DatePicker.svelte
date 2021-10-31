@@ -1,5 +1,6 @@
 <script>
   import { scale } from 'svelte/transition'
+  import { quintOut } from 'svelte/easing'
 
   export let value
 </script>
@@ -7,8 +8,8 @@
 <input
   type="date"
   bind:value
-  in:scale={{ delay: 400 }}
-  out:scale={{ duration: 400 }}
+  in:scale={{ delay: 400, opacity: 0.52 }}
+  out:scale={{ duration: 200, opacity: 0.52, easing: quintOut }}
 />
 
 <style>

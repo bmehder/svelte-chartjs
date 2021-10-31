@@ -20,7 +20,6 @@
   let report = 'report-1'
   let domain = 'restoreosteo'
   let isLoading = false
-  let isDarkMode = false
   let fetchedData = null
   let totalAppointments = 0
   let totalAppointmentsByMonth = 0
@@ -144,7 +143,7 @@
 
 <svelte:window on:keypress={e => e.key === 'Enter' && makeAPIRequest()} />
 
-<main class:dark={isDarkMode}>
+<main>
   {#await makeAPIRequest()}
     <Spinner />
   {:then _}
@@ -180,7 +179,7 @@
   {/if}
 </main>
 
-<footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
+<footer>
   {#key report}
     <Select bind:value={report} options={reports} on:change={makeAPIRequest} />
     <Select bind:value={chartType} options={chartTypes} />
@@ -234,10 +233,6 @@
   div p {
     font-size: 2rem;
     padding-bottom: 1rem;
-  }
-
-  .dark {
-    background-color: #424242;
   }
 
   :global(*) {

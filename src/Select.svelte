@@ -1,5 +1,6 @@
 <script>
   import { scale } from 'svelte/transition'
+  import { quintOut } from 'svelte/easing'
 
   export let options = null
   export let value = null
@@ -8,8 +9,8 @@
 <select
   bind:value
   on:change
-  in:scale={{ delay: 400 }}
-  out:scale={{ duration: 400 }}
+  in:scale={{ delay: 400, opacity: 0.52 }}
+  out:scale={{ duration: 200, opacity: 0.52, easing: quintOut }}
 >
   {#each options as { value, name }}
     <option {value}>{name}</option>

@@ -1,5 +1,6 @@
 <script>
   import { scale } from 'svelte/transition'
+  import { quintOut } from 'svelte/easing'
 
   export let isLoading = false
 </script>
@@ -7,8 +8,8 @@
 <span
   class:isLoading
   on:click
-  in:scale={{ delay: 400 }}
-  out:scale={{ duration: 400 }}>&#x21bb;</span
+  in:scale={{ delay: 400, opacity: 0.52 }}
+  out:scale={{ duration: 200, opacity: 0.52, easing: quintOut }}>&#x21bb;</span
 >
 
 <style>
