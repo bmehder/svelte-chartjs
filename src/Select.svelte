@@ -1,9 +1,16 @@
 <script>
+  import { scale } from 'svelte/transition'
+
   export let options = null
   export let value = null
 </script>
 
-<select bind:value on:change>
+<select
+  bind:value
+  on:change
+  in:scale={{ delay: 400 }}
+  out:scale={{ duration: 400 }}
+>
   {#each options as { value, name }}
     <option {value}>{name}</option>
   {/each}

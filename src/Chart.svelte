@@ -24,6 +24,6 @@
 
 <style>
   canvas {
-    max-height: 70vh;
+    max-height: 65vh;
   }
 </style>

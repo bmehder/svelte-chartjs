@@ -3,7 +3,7 @@
   import { chartTypes } from './chartTypes'
   import { reports } from './reports'
   import { printToConsole } from './console'
-  import { scale } from 'svelte/transition'
+  import { scale, fly } from 'svelte/transition'
 
   // Svelte components
   import Spinner from './Spinner.svelte'
@@ -158,7 +158,7 @@
 
     {#if fetchedData}
       <aside use:getSumOfAllApointments={fetchedData} transition:scale>
-        {#if report === 'report-3'}
+        {#if report === 'report-3' && fetchedData?.length !== 0}
           {#each getTotalAppointmentsByMonth() as totals}
             <li>{totals}</li>
           {/each}
@@ -168,23 +168,28 @@
   {:catch err}
     <p>💩<br /><span>Don't panic!</span><br />{err.message}</p>
   {/await}
+
+  {#if fetchedData}
+    <div>
+      <p use:sumMonthlyAppointments={fetchedData} transition:scale>
+        {#if totalAppointmentsByMonth}
+          {totalAppointmentsByMonth + ' Appointments '}
+        {/if}
+      </p>
+    </div>
+  {/if}
 </main>
 
 <footer on:dblclick={() => (isDarkMode = !isDarkMode)}>
-  <Select bind:value={report} options={reports} on:change={makeAPIRequest} />
-  <Select bind:value={chartType} options={chartTypes} />
-  {#if report !== 'report-3'}
-    <DatePicker bind:value={startDate} />
-    <DatePicker bind:value={endDate} />
-  {/if}
-  <Refresher on:click={makeAPIRequest} {isLoading} />
-  {#if fetchedData}
-    <p use:sumMonthlyAppointments={fetchedData} transition:scale>
-      {#if totalAppointmentsByMonth}
-        {'Total: ' + totalAppointmentsByMonth}
-      {/if}
-    </p>
-  {/if}
+  {#key report}
+    <Select bind:value={report} options={reports} on:change={makeAPIRequest} />
+    <Select bind:value={chartType} options={chartTypes} />
+    {#if report !== 'report-3'}
+      <DatePicker bind:value={startDate} />
+      <DatePicker bind:value={endDate} />
+    {/if}
+    <Refresher on:click={makeAPIRequest} {isLoading} />
+  {/key}
 </footer>
 
 <style>
@@ -226,8 +231,9 @@
     color: white;
   }
 
-  footer p {
+  div p {
     font-size: 2rem;
+    padding-bottom: 1rem;
   }
 
   .dark {

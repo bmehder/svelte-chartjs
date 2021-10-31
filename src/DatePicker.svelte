@@ -1,8 +1,15 @@
 <script>
+  import { scale } from 'svelte/transition'
+
   export let value
 </script>
 
-<input type="date" bind:value />
+<input
+  type="date"
+  bind:value
+  in:scale={{ delay: 400 }}
+  out:scale={{ duration: 400 }}
+/>
 
 <style>
   input {

@@ -1,8 +1,15 @@
 <script>
+  import { scale } from 'svelte/transition'
+
   export let isLoading = false
 </script>
 
-<span class:isLoading on:click>&#x21bb;</span>
+<span
+  class:isLoading
+  on:click
+  in:scale={{ delay: 400 }}
+  out:scale={{ duration: 400 }}>&#x21bb;</span
+>
 
 <style>
   span {
