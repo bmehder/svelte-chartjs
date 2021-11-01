@@ -21,6 +21,7 @@
   let domain = 'restoreosteo'
   let isLoading = false
   let fetchedData = null
+  let totalAppointments = 0
 
   $: chartConfig = {
     type: chartType,
@@ -92,6 +93,22 @@
   const makeAPIRequest = () => {
     getData(endPoint).then(() => printToConsole(consoleData))
   }
+
+  const sumAllAppointments = (node, fetchedData) => {
+    totalAppointments = fetchedData.datasets
+      .map(dataset => dataset.data.reduce((total, next) => (total += next)))
+      .reduce((total, next) => (total += next))
+
+    return {
+      update(fetchedData) {
+        totalAppointments = fetchedData.datasets
+          .map(dataset => dataset.data.reduce((total, next) => (total += next)))
+          .reduce((total, next) => (total += next))
+      },
+    }
+  }
+
+  $: console.log(totalAppointments)
 </script>
 
 <svelte:window on:keypress={e => e.key === 'Enter' && makeAPIRequest()} />
@@ -106,6 +123,9 @@
 
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
       <Chart config={chartConfig} />
+      <div use:sumAllAppointments={fetchedData}>
+        {totalAppointments}
+      </div>
     {/if}
   {:catch err}
     <p>💩<br /><span>Don't panic!</span><br />{err.message}</p>
@@ -133,6 +153,10 @@
     background: white;
     text-align: center;
     font-size: 10vw;
+  }
+
+  div {
+    font-size: 0.5em;
   }
 
   span {
