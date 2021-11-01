@@ -21,8 +21,6 @@
   let domain = 'restoreosteo'
   let isLoading = false
   let fetchedData = null
-  let totalAppointments = 0
-  let totalAppointmentsByMonth = 0
 
   $: chartConfig = {
     type: chartType,
@@ -39,7 +37,6 @@
   $: domain = report === 'report-2' ? 'restoreosteo' : 'restoreosteo'
 
   $: endPoint = `https://${domain}.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
-  // $: endPoint = `api/get.json`
 
   // Getters for chart settings in session storage
   sessionStorage.getItem('report') &&
@@ -92,50 +89,6 @@
     isLoading = false
   }
 
-  const getTotalAppointmentsByMonth = () => {
-    let totalAppointmentsByMonth = []
-
-    for (let i = 0; i < fetchedData.datasets?.length; i++) {
-      totalAppointmentsByMonth = [
-        ...totalAppointmentsByMonth,
-        fetchedData.datasets
-          .map(dataset => dataset.data)
-          .map(data => data[i])
-          .reduce((total, next) => (total += next)),
-      ]
-    }
-    return totalAppointmentsByMonth
-  }
-
-  // Actions
-  const getSumOfAllApointments = (node, fetchedData) => {
-    totalAppointments = fetchedData.datasets?.map(dataset => {
-      return dataset.data.reduce((total, next) => (total += next))
-    })
-
-    return {
-      update(fetchedData) {
-        totalAppointments = fetchedData.datasets?.map(dataset => {
-          return dataset.data.reduce((total, next) => (total += next))
-        })
-      },
-      onDestroy() {},
-    }
-  }
-
-  const sumMonthlyAppointments = (node, fetchedData) => {
-    totalAppointmentsByMonth = totalAppointments?.reduce(
-      (total, next) => (total += next)
-    )
-    return {
-      update(fetchedData) {
-        totalAppointmentsByMonth = totalAppointments?.reduce(
-          (total, next) => (total += next)
-        )
-      },
-    }
-  }
-
   const makeAPIRequest = () => {
     getData(endPoint).then(() => printToConsole(consoleData))
   }
@@ -154,29 +107,9 @@
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
       <Chart config={chartConfig} />
     {/if}
-
-    {#if fetchedData}
-      <aside use:getSumOfAllApointments={fetchedData} transition:scale>
-        {#if report === 'report-3' && fetchedData?.length !== 0}
-          {#each getTotalAppointmentsByMonth() as totals}
-            <li>{totals}</li>
-          {/each}
-        {/if}
-      </aside>
-    {/if}
   {:catch err}
     <p>💩<br /><span>Don't panic!</span><br />{err.message}</p>
   {/await}
-
-  {#if fetchedData}
-    <div>
-      <p use:sumMonthlyAppointments={fetchedData} transition:scale>
-        {#if totalAppointmentsByMonth}
-          {totalAppointmentsByMonth + ' Appointments '}
-        {/if}
-      </p>
-    </div>
-  {/if}
 </main>
 
 <footer>
@@ -202,18 +135,6 @@
     font-size: 10vw;
   }
 
-  aside {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    font-size: 0.5em;
-    user-select: none;
-  }
-
-  li {
-    list-style-type: none;
-  }
-
   span {
     color: red;
     font-weight: 900;
@@ -228,11 +149,6 @@
     padding: 1.5rem;
     background-color: #323232;
     color: white;
-  }
-
-  div p {
-    font-size: 2rem;
-    padding-bottom: 1rem;
   }
 
   :global(*) {
