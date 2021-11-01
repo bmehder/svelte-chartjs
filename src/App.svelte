@@ -36,7 +36,7 @@
     fetchedData,
   }
 
-  $: domain = report === 'report-2' ? 'restoreosteo' : 'restoreosteo'
+  $: domain = report === 'report-2' ? 'primeregen' : 'restoreosteo'
 
   $: endPoint = `https://${domain}.com/?report=${report}&startDate=${startDate}&endDate=${endDate}`
 
@@ -65,40 +65,9 @@
   $: startDate > today && (startDate = today)
   $: endDate > today && (endDate = today)
 
-  // Predicate
-  const isInvalidDateRange = () => {
-    if (endDate < startDate) {
-      alert('The end date cannot be before the start date.')
-      return true
-    }
-  }
-
-  // API request
-  const getData = async url => {
-    if (isInvalidDateRange()) return
-
-    isLoading = true
-
-    try {
-      const res = await fetch(url)
-      const data = await res.json()
-      fetchedData = data
-    } catch (err) {
-      isLoading = false
-      throw new Error(err)
-    }
-
-    isLoading = false
-  }
-
-  const makeAPIRequest = () => {
-    fetchedData = null
-    getData(endPoint).then(() => printToConsole(consoleData))
-  }
-
-  const sumAllMonthlyAppointments = () => {
+  const sumAllMonthlyAppointments = node => {
     let totalMonthlyAppointments = []
-    for (let i = 0; i < fetchedData.labels?.length; i++) {
+    for (let i = 0; i < fetchedData.labels.length; i++) {
       totalMonthlyAppointments = [
         ...totalMonthlyAppointments,
         fetchedData.datasets
@@ -126,45 +95,80 @@
       },
     }
   }
+
+  // Predicate
+  const isInvalidDateRange = () => {
+    if (endDate < startDate) {
+      alert('The end date cannot be before the start date.')
+      return true
+    }
+  }
+
+  // API request
+  const getData = async url => {
+    if (isInvalidDateRange()) return
+
+    fetchedData = null
+    isLoading = true
+
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
+      fetchedData = data
+    } catch (err) {
+      isLoading = false
+      console.log("Don't panic, but... " + err)
+    }
+
+    isLoading = false
+  }
+
+  const makeAPIRequest = (node, endPoint) => {
+    getData(endPoint).then(() => printToConsole(consoleData))
+
+    return {
+      update(endPoint) {
+        getData(endPoint).then(() => printToConsole(consoleData))
+      },
+    }
+  }
 </script>
 
-<svelte:window on:keypress={e => e.key === 'Enter' && makeAPIRequest()} />
+<svelte:window on:keypress={e => e.key === 'Enter' && getData(endPoint)} />
 
-<main>
-  {#await makeAPIRequest()}
+<main use:makeAPIRequest={endPoint}>
+  {#if fetchedData === null}
     <Spinner />
-  {:then _}
-    {#if fetchedData?.length === 0}
-      <p>👎<br /><span>No report</span></p>
-    {/if}
+  {/if}
 
-    {#if fetchedData && Object.keys(fetchedData).length !== 0}
-      <Chart config={chartConfig} />
-      {#if report === 'report-3'}
-        <div use:sumAllMonthlyAppointments>
-          {#each totalAppointmentsArray as monthlyAppointments}
-            <li>{monthlyAppointments}</li>
-          {/each}
-        </div>
-      {/if}
-      <div use:sumAllAppointments={fetchedData}>
-        {`${totalAppointments} total`}
-      </div>
+  {#if fetchedData?.length === 0}
+    <p>👎<br /><span>No report</span></p>
+  {/if}
+
+  {#if fetchedData}
+    <Chart config={chartConfig} />
+    {#if report === 'report-3'}
+      <aside use:sumAllMonthlyAppointments>
+        {#each totalAppointmentsArray as monthlyAppointments}
+          <li>{monthlyAppointments}</li>
+        {/each}
+      </aside>
     {/if}
-  {:catch err}
-    <p>💩<br /><span>Don't panic!</span><br />{err.message}</p>
-  {/await}
+    <aside use:sumAllAppointments={fetchedData}>
+      {`${totalAppointments} total`}
+    </aside>
+  {/if}
 </main>
 
 <footer>
   {#key report}
-    <Select bind:value={report} options={reports} on:change={makeAPIRequest} />
+    <Select bind:value={report} options={reports} />
     <Select bind:value={chartType} options={chartTypes} />
     {#if report !== 'report-3'}
       <DatePicker bind:value={startDate} />
       <DatePicker bind:value={endDate} />
     {/if}
-    <Refresher on:click={makeAPIRequest} {isLoading} />
+    <Refresher on:click={() => getData(endPoint)} {isLoading} />
   {/key}
 </footer>
 
@@ -176,17 +180,16 @@
     padding: 0 2rem;
     background: white;
     text-align: center;
-    font-size: 10vw;
   }
 
-  div {
+  aside {
     width: 100%;
     display: flex;
     justify-content: space-around;
-    font-size: 0.5em;
+    font-size: 2vw;
   }
 
-  li {
+  aside li {
     list-style-type: none;
   }
 
