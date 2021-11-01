@@ -186,11 +186,6 @@
     list-style-type: none;
   }
 
-  span {
-    color: red;
-    font-weight: 900;
-  }
-
   footer {
     height: 15vh;
     display: flex;
