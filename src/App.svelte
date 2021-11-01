@@ -22,6 +22,7 @@
   let isLoading = false
   let fetchedData = null
   let totalAppointments = 0
+  let totalAppointmentsArray = []
 
   $: chartConfig = {
     type: chartType,
@@ -91,7 +92,22 @@
   }
 
   const makeAPIRequest = () => {
+    fetchedData = null
     getData(endPoint).then(() => printToConsole(consoleData))
+  }
+
+  const sumAllMonthlyAppointments = () => {
+    let totalMonthlyAppointments = []
+    for (let i = 0; i < fetchedData.labels?.length; i++) {
+      totalMonthlyAppointments = [
+        ...totalMonthlyAppointments,
+        fetchedData.datasets
+          .map(dataset => dataset.data)
+          .map(data => data[i])
+          .reduce((total, next) => (total += next)),
+      ]
+    }
+    totalAppointmentsArray = totalMonthlyAppointments
   }
 
   const sumAllAppointments = (node, fetchedData) => {
@@ -105,10 +121,11 @@
           .map(dataset => dataset.data.reduce((total, next) => (total += next)))
           .reduce((total, next) => (total += next))
       },
+      destroy() {
+        totalAppointments = 0
+      },
     }
   }
-
-  $: console.log(totalAppointments)
 </script>
 
 <svelte:window on:keypress={e => e.key === 'Enter' && makeAPIRequest()} />
@@ -123,8 +140,15 @@
 
     {#if fetchedData && Object.keys(fetchedData).length !== 0}
       <Chart config={chartConfig} />
+      {#if report === 'report-3'}
+        <div use:sumAllMonthlyAppointments>
+          {#each totalAppointmentsArray as monthlyAppointments}
+            <li>{monthlyAppointments}</li>
+          {/each}
+        </div>
+      {/if}
       <div use:sumAllAppointments={fetchedData}>
-        {totalAppointments}
+        {`${totalAppointments} total`}
       </div>
     {/if}
   {:catch err}
@@ -156,7 +180,14 @@
   }
 
   div {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
     font-size: 0.5em;
+  }
+
+  li {
+    list-style-type: none;
   }
 
   span {
