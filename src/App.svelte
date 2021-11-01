@@ -3,7 +3,6 @@
   import { chartTypes } from './chartTypes'
   import { reports } from './reports'
   import { printToConsole } from './console'
-  import { scale, fly } from 'svelte/transition'
 
   // Svelte components
   import Spinner from './Spinner.svelte'
@@ -14,6 +13,7 @@
 
   // App state
   const today = new Date().toISOString().slice(0, 10)
+
   let startDate = '2021-07-18'
   let endDate = today
   let chartType = 'bar'
@@ -22,7 +22,6 @@
   let isLoading = false
   let fetchedData = null
   let totalAppointments = 0
-  let totalAppointmentsArray = []
 
   $: chartConfig = {
     type: chartType,
@@ -65,18 +64,25 @@
   $: startDate > today && (startDate = today)
   $: endDate > today && (endDate = today)
 
-  const sumAllMonthlyAppointments = node => {
+  // Predicate
+  const isInvalidDateRange = () => {
+    if (endDate < startDate) {
+      alert('The end date cannot be before the start date.')
+      return true
+    }
+  }
+
+  const sumAllMonthlyAppointments = () => {
     let totalMonthlyAppointments = []
     for (let i = 0; i < fetchedData.labels.length; i++) {
       totalMonthlyAppointments = [
         ...totalMonthlyAppointments,
         fetchedData.datasets
-          .map(dataset => dataset.data)
-          .map(data => data[i])
+          .map(dataset => dataset.data[i])
           .reduce((total, next) => (total += next)),
       ]
     }
-    totalAppointmentsArray = totalMonthlyAppointments
+    return totalMonthlyAppointments
   }
 
   const sumAllAppointments = (node, fetchedData) => {
@@ -96,15 +102,6 @@
     }
   }
 
-  // Predicate
-  const isInvalidDateRange = () => {
-    if (endDate < startDate) {
-      alert('The end date cannot be before the start date.')
-      return true
-    }
-  }
-
-  // API request
   const getData = async url => {
     if (isInvalidDateRange()) return
 
@@ -117,7 +114,7 @@
       fetchedData = data
     } catch (err) {
       isLoading = false
-      console.log("Don't panic, but... " + err)
+      console.error("Don't panic, but... " + err)
     }
 
     isLoading = false
@@ -134,22 +131,18 @@
   }
 </script>
 
-<svelte:window on:keypress={e => e.key === 'Enter' && getData(endPoint)} />
+<svelte:window
+  on:keypress={e => e.key === 'Enter' && makeAPIRequest(null, endPoint)}
+/>
 
 <main use:makeAPIRequest={endPoint}>
-  {#if fetchedData === null}
+  {#if !fetchedData}
     <Spinner />
-  {/if}
-
-  {#if fetchedData?.length === 0}
-    <p>👎<br /><span>No report</span></p>
-  {/if}
-
-  {#if fetchedData}
+  {:else}
     <Chart config={chartConfig} />
     {#if report === 'report-3'}
-      <aside use:sumAllMonthlyAppointments>
-        {#each totalAppointmentsArray as monthlyAppointments}
+      <aside>
+        {#each sumAllMonthlyAppointments() as monthlyAppointments}
           <li>{monthlyAppointments}</li>
         {/each}
       </aside>
@@ -168,7 +161,7 @@
       <DatePicker bind:value={startDate} />
       <DatePicker bind:value={endDate} />
     {/if}
-    <Refresher on:click={() => getData(endPoint)} {isLoading} />
+    <Refresher on:click={() => makeAPIRequest(null, endPoint)} {isLoading} />
   {/key}
 </footer>
 
@@ -189,7 +182,7 @@
     font-size: 2vw;
   }
 
-  aside li {
+  li {
     list-style-type: none;
   }
 
