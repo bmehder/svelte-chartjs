@@ -8,7 +8,7 @@
     -webkit-animation: load1 1s infinite ease-in-out;
     animation: load1 1s infinite ease-in-out;
     width: 1em;
-    height: 4em;
+    height: em;
   }
   div {
     color: #8e5ea2;

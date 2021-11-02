@@ -12,16 +12,18 @@
   import Chart from './Chart.svelte'
 
   // App state
-  const today = new Date().toISOString().slice(0, 10)
+  const TODAY = new Date().toISOString().slice(0, 10)
 
   let startDate = '2021-07-18'
-  let endDate = today
+  let endDate = TODAY
   let chartType = 'bar'
   let report = 'report-1'
   let domain = 'restoreosteo'
   let isLoading = false
   let fetchedData = null
   let totalAppointments = 0
+  let totalMonthlyAppointments = []
+  let error
 
   $: chartConfig = {
     type: chartType,
@@ -61,19 +63,16 @@
   // Keep dates within a logical range
   $: startDate < '2021-07-18' && (startDate = '2021-07-18')
   $: endDate < '2021-07-18' && (endDate = '2021-07-18')
-  $: startDate > today && (startDate = today)
-  $: endDate > today && (endDate = today)
+  $: startDate > TODAY && (startDate = TODAY)
+  $: endDate > TODAY && (endDate = TODAY)
 
-  // Predicate
-  const isInvalidDateRange = () => {
-    if (endDate < startDate) {
-      alert('The end date cannot be before the start date.')
-      return true
-    }
-  }
+  // Predicates
+  $: isInvalidDateRange = endDate < startDate
+  $: isShowDates = report === 'report-1'
+  $: isMonthlyReport = !isShowDates
 
-  const sumAllMonthlyAppointments = () => {
-    let totalMonthlyAppointments = []
+  const sumAllAppointmentsByMonth = node => {
+    totalMonthlyAppointments = []
     for (let i = 0; i < fetchedData.labels.length; i++) {
       totalMonthlyAppointments = [
         ...totalMonthlyAppointments,
@@ -82,19 +81,25 @@
           .reduce((total, next) => (total += next)),
       ]
     }
-    return totalMonthlyAppointments
+    return {
+      destroy() {
+        totalMonthlyAppointments = []
+      },
+    }
   }
 
   const sumAllAppointments = (node, fetchedData) => {
-    totalAppointments = fetchedData.datasets
-      .map(dataset => dataset.data.reduce((total, next) => (total += next)))
-      .reduce((total, next) => (total += next))
+    const getTotalAppointments = () => {
+      totalAppointments = fetchedData.datasets
+        .map(dataset => dataset.data.reduce((total, next) => (total += next)))
+        .reduce((total, next) => (total += next))
+    }
+
+    getTotalAppointments()
 
     return {
       update(fetchedData) {
-        totalAppointments = fetchedData.datasets
-          .map(dataset => dataset.data.reduce((total, next) => (total += next)))
-          .reduce((total, next) => (total += next))
+        getTotalAppointments()
       },
       destroy() {
         totalAppointments = 0
@@ -102,25 +107,30 @@
     }
   }
 
-  const getData = async url => {
-    if (isInvalidDateRange()) return
-
-    fetchedData = null
-    isLoading = true
-
-    try {
-      const res = await fetch(url)
-      const data = await res.json()
-      fetchedData = data
-    } catch (err) {
-      isLoading = false
-      console.error("Don't panic, but... " + err)
+  const makeAPIRequest = (node, endPoint) => {
+    if (isInvalidDateRange) {
+      alert('The end date cannot be before the start date.')
+      return
     }
 
-    isLoading = false
-  }
+    const getData = async endPoint => {
+      error = null
+      fetchedData = null
 
-  const makeAPIRequest = (node, endPoint) => {
+      isLoading = true
+
+      try {
+        const res = await fetch(endPoint)
+        const data = await res.json()
+        fetchedData = data
+      } catch (err) {
+        isLoading = false
+        error = err
+      }
+
+      isLoading = false
+    }
+
     getData(endPoint).then(() => printToConsole(consoleData))
 
     return {
@@ -136,17 +146,27 @@
 />
 
 <main use:makeAPIRequest={endPoint}>
-  {#if !fetchedData}
+  {#if !fetchedData && !error}
     <Spinner />
-  {:else}
+  {/if}
+
+  {#if error}
+    <div>
+      <span>💩</span><br />Don't panic, but...<br /><code>{error}</code>
+    </div>
+  {/if}
+
+  {#if fetchedData}
     <Chart config={chartConfig} />
-    {#if report === 'report-3'}
-      <aside>
-        {#each sumAllMonthlyAppointments() as monthlyAppointments}
+
+    {#if isMonthlyReport}
+      <aside use:sumAllAppointmentsByMonth>
+        {#each totalMonthlyAppointments as monthlyAppointments}
           <li>{monthlyAppointments}</li>
         {/each}
       </aside>
     {/if}
+
     <aside use:sumAllAppointments={fetchedData}>
       {`${totalAppointments} total`}
     </aside>
@@ -157,7 +177,7 @@
   {#key report}
     <Select bind:value={report} options={reports} />
     <Select bind:value={chartType} options={chartTypes} />
-    {#if report !== 'report-3'}
+    {#if isShowDates}
       <DatePicker bind:value={startDate} />
       <DatePicker bind:value={endDate} />
     {/if}
@@ -184,6 +204,16 @@
 
   li {
     list-style-type: none;
+  }
+
+  div {
+    width: 70%;
+    color: red;
+    font-size: 4vw;
+  }
+
+  code {
+    color: initial;
   }
 
   footer {
