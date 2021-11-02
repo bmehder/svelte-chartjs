@@ -69,7 +69,7 @@
   // Predicates
   $: isInvalidDateRange = endDate < startDate
   $: isShowDates = report === 'report-1'
-  $: isMonthlyReport = !isShowDates
+  $: isMonthlyReport = report === 'report-3'
 
   const sumAllAppointmentsByMonth = node => {
     totalMonthlyAppointments = []
