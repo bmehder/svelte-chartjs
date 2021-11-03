@@ -168,7 +168,7 @@
     {/if}
 
     <aside use:sumAllData={fetchedData}>
-      {`${totalOfAllData + 3} total`}
+      {`${totalOfAllData} total`}
     </aside>
   {/if}
 </main>
