@@ -21,8 +21,8 @@
   let domain = 'restoreosteo'
   let isLoading = false
   let fetchedData = null
-  let totalAppointments = 0
-  let totalMonthlyAppointments = []
+  let totalOfAllData = 0
+  let totalOfDataByDatasets = []
   let error
 
   $: chartConfig = {
@@ -69,13 +69,13 @@
   // Predicates
   $: isInvalidDateRange = endDate < startDate
   $: isShowDates = report === 'report-1'
-  $: isMonthlyReport = report === 'report-3'
+  $: isDataGroupedByLabel = report === 'report-3'
 
-  const sumAllAppointmentsByMonth = node => {
-    totalMonthlyAppointments = []
+  const sumAllDataByDataset = node => {
+    totalOfDataByDatasets = []
     for (let i = 0; i < fetchedData.labels.length; i++) {
-      totalMonthlyAppointments = [
-        ...totalMonthlyAppointments,
+      totalOfDataByDatasets = [
+        ...totalOfDataByDatasets,
         fetchedData.datasets
           .map(dataset => dataset.data[i])
           .reduce((total, next) => (total += next)),
@@ -83,26 +83,26 @@
     }
     return {
       destroy() {
-        totalMonthlyAppointments = []
+        totalOfDataByDatasets = []
       },
     }
   }
 
-  const sumAllAppointments = (node, fetchedData) => {
-    const getTotalAppointments = () => {
-      totalAppointments = fetchedData.datasets
+  const sumAllData = (node, fetchedData) => {
+    const getSumOfAllData = () => {
+      totalOfAllData = fetchedData.datasets
         .map(dataset => dataset.data.reduce((total, next) => (total += next)))
         .reduce((total, next) => (total += next))
     }
 
-    getTotalAppointments()
+    getSumOfAllData()
 
     return {
       update(fetchedData) {
-        getTotalAppointments()
+        getSumOfAllData()
       },
       destroy() {
-        totalAppointments = 0
+        totalOfAllData = 0
       },
     }
   }
@@ -159,16 +159,16 @@
   {#if fetchedData}
     <Chart config={chartConfig} />
 
-    {#if isMonthlyReport}
-      <aside use:sumAllAppointmentsByMonth>
-        {#each totalMonthlyAppointments as monthlyAppointments}
-          <li>{monthlyAppointments}</li>
+    {#if isDataGroupedByLabel}
+      <aside use:sumAllDataByDataset>
+        {#each totalOfDataByDatasets as totalOfDataByDataset}
+          <li>{totalOfDataByDataset}</li>
         {/each}
       </aside>
     {/if}
 
-    <aside use:sumAllAppointments={fetchedData}>
-      {`${totalAppointments} total`}
+    <aside use:sumAllData={fetchedData}>
+      {`${totalOfAllData + 3} total`}
     </aside>
   {/if}
 </main>
