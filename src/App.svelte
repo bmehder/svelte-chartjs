@@ -1,7 +1,7 @@
 <script>
-  // Data structures, util and transition functions
-  import { chartTypes } from './chartTypes'
-  import { reports } from './reports'
+  // Data and util functions
+  import { chartTypes as chartOptions } from './chartTypes'
+  import { reports as reportOptions } from './reports'
   import { printToConsole } from './console'
 
   // Svelte components
@@ -10,6 +10,8 @@
   import Select from './Select.svelte'
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
+  import Display from './Display.svelte'
+  import Error from './Error.svelte'
 
   // App state
   const TODAY = new Date().toISOString().slice(0, 10)
@@ -21,9 +23,7 @@
   let domain = 'restoreosteo'
   let isLoading = false
   let fetchedData = null
-  let totalOfAllData = 0
-  let totalOfDataByDatasets = []
-  let error
+  let error = null
 
   $: chartConfig = {
     type: chartType,
@@ -66,46 +66,10 @@
   $: startDate > TODAY && (startDate = TODAY)
   $: endDate > TODAY && (endDate = TODAY)
 
-  // Predicates
+  // Reactive bools
   $: isInvalidDateRange = endDate < startDate
   $: isShowDates = report === 'report-1'
   $: isDataGroupedByLabel = report === 'report-3'
-
-  const sumAllDataByDataset = node => {
-    totalOfDataByDatasets = []
-    for (let i = 0; i < fetchedData.labels.length; i++) {
-      totalOfDataByDatasets = [
-        ...totalOfDataByDatasets,
-        fetchedData.datasets
-          .map(dataset => dataset.data[i])
-          .reduce((total, next) => (total += next)),
-      ]
-    }
-    return {
-      destroy() {
-        totalOfDataByDatasets = []
-      },
-    }
-  }
-
-  const sumAllData = (node, fetchedData) => {
-    const getSumOfAllData = () => {
-      totalOfAllData = fetchedData.datasets
-        .map(dataset => dataset.data.reduce((total, next) => (total += next)))
-        .reduce((total, next) => (total += next))
-    }
-
-    getSumOfAllData()
-
-    return {
-      update(fetchedData) {
-        getSumOfAllData()
-      },
-      destroy() {
-        totalOfAllData = 0
-      },
-    }
-  }
 
   const makeAPIRequest = (node, endPoint) => {
     if (isInvalidDateRange) {
@@ -151,32 +115,19 @@
   {/if}
 
   {#if error}
-    <div>
-      <span>💩</span><br />Don't panic, but...<br /><code>{error}</code>
-    </div>
+    <Error {error} />
   {/if}
 
   {#if fetchedData}
     <Chart config={chartConfig} />
-
-    {#if isDataGroupedByLabel}
-      <aside use:sumAllDataByDataset>
-        {#each totalOfDataByDatasets as totalOfDataByDataset}
-          <li>{totalOfDataByDataset}</li>
-        {/each}
-      </aside>
-    {/if}
-
-    <aside use:sumAllData={fetchedData}>
-      {`${totalOfAllData} total`}
-    </aside>
+    <Display {fetchedData} {isDataGroupedByLabel} />
   {/if}
 </main>
 
 <footer>
   {#key report}
-    <Select bind:value={report} options={reports} />
-    <Select bind:value={chartType} options={chartTypes} />
+    <Select bind:value={report} options={reportOptions} />
+    <Select bind:value={chartType} options={chartOptions} />
     {#if isShowDates}
       <DatePicker bind:value={startDate} />
       <DatePicker bind:value={endDate} />
@@ -193,27 +144,6 @@
     padding: 0 2rem;
     background: white;
     text-align: center;
-  }
-
-  aside {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    font-size: 2vw;
-  }
-
-  li {
-    list-style-type: none;
-  }
-
-  div {
-    width: 70%;
-    color: red;
-    font-size: 4vw;
-  }
-
-  code {
-    color: initial;
   }
 
   footer {
