@@ -59,6 +59,7 @@
     width: 100%;
     display: flex;
     justify-content: space-around;
+    padding-left: 24px;
     font-size: 2vw;
   }
 
