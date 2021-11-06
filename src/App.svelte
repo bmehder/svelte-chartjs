@@ -2,6 +2,7 @@
   // Data and util functions
   import { chartTypes as chartOptions } from './chartTypes'
   import { reports as reportOptions } from './reports'
+  import { items } from './fake'
   import { printToConsole } from './console'
 
   // Svelte components
@@ -12,6 +13,7 @@
   import Chart from './Chart.svelte'
   import Display from './Display.svelte'
   import Error from './Error.svelte'
+  import Table from './Table.svelte'
 
   // App state
   const TODAY = new Date().toISOString().slice(0, 10)
@@ -68,7 +70,7 @@
 
   // Reactive bools
   $: isInvalidDateRange = endDate < startDate
-  $: isShowDates = report === 'report-1'
+  $: isShowDates = report === 'report-1' || report === 'report-4'
   $: isDataGroupedByLabel = report === 'report-3'
 
   const makeAPIRequest = (node, endPoint) => {
@@ -114,7 +116,7 @@
     <Spinner />
   {/if}
 
-  {#if error}
+  {#if error && report !== 'report-4'}
     <Error {error} />
   {/if}
 
@@ -122,12 +124,20 @@
     <Chart config={chartConfig} />
     <Display {fetchedData} {isDataGroupedByLabel} />
   {/if}
+
+  {#if report === 'report-4' && error}
+    <div>
+      <Table {items} />
+    </div>
+  {/if}
 </main>
 
 <footer>
   {#key report}
     <Select bind:value={report} options={reportOptions} />
-    <Select bind:value={chartType} options={chartOptions} />
+    {#if report !== 'report-4'}
+      <Select bind:value={chartType} options={chartOptions} />
+    {/if}
     {#if isShowDates}
       <DatePicker bind:value={startDate} />
       <DatePicker bind:value={endDate} />
@@ -144,6 +154,12 @@
     padding: 0 2rem;
     background: white;
     text-align: center;
+  }
+
+  div {
+    width: 100%;
+    height: 80vh;
+    overflow-y: scroll;
   }
 
   footer {
