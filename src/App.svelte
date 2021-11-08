@@ -121,14 +121,15 @@
   {/if}
 
   {#if fetchedData}
-    <Chart config={chartConfig} />
-    <Totals {fetchedData} {isDataGroupedByLabel} />
-  {/if}
-
-  {#if report === 'report-4' && error}
-    <div>
-      <Table {items} />
-    </div>
+    {#if report !== 'report-4'}
+      <Chart config={chartConfig} />
+      <Totals {fetchedData} {isDataGroupedByLabel} />
+    {/if}
+    {#if report === 'report-4'}
+      <div>
+        <Table {fetchedData} />
+      </div>
+    {/if}
   {/if}
 </main>
 
