@@ -2,6 +2,7 @@
   // Data and util functions
   import { chartTypes as chartOptions } from './chartTypes'
   import { reports as reportOptions } from './reports'
+  import { items } from '../public/api/fake'
   import { printToConsole } from './console'
 
   // Svelte components
@@ -119,16 +120,15 @@
     <Error {error} />
   {/if}
 
-  {#if fetchedData}
-    {#if report !== 'report-4'}
-      <Chart config={chartConfig} />
-      <Totals {fetchedData} {isDataGroupedByLabel} />
-    {/if}
-    {#if report === 'report-4'}
-      <div>
-        <Table {fetchedData} />
-      </div>
-    {/if}
+  {#if fetchedData && report !== 'report-4'}
+    <Chart config={chartConfig} />
+    <Totals {fetchedData} {isDataGroupedByLabel} />
+  {/if}
+
+  {#if report === 'report-4'}
+    <div>
+      <Table {items} />
+    </div>
   {/if}
 </main>
 

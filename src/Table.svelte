@@ -1,10 +1,10 @@
 <script>
-  export let fetchedData = []
+  export let items = []
 
-  $: console.log(JSON.stringify(fetchedData, null, 4))
+  $: console.log(JSON.stringify(items, null, 4))
 </script>
 
-{#each fetchedData as item}
+{#each items as item}
   <h3>{item.location}</h3>
   <table>
     <tr>
