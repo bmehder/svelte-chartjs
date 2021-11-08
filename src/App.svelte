@@ -2,7 +2,6 @@
   // Data and util functions
   import { chartTypes as chartOptions } from './chartTypes'
   import { reports as reportOptions } from './reports'
-  import { items } from './fake'
   import { printToConsole } from './console'
 
   // Svelte components
