@@ -11,7 +11,7 @@
   import Select from './Select.svelte'
   import Refresher from './Refresher.svelte'
   import Chart from './Chart.svelte'
-  import Display from './Display.svelte'
+  import Totals from './Totals.svelte'
   import Error from './Error.svelte'
   import Table from './Table.svelte'
 
@@ -122,7 +122,7 @@
 
   {#if fetchedData}
     <Chart config={chartConfig} />
-    <Display {fetchedData} {isDataGroupedByLabel} />
+    <Totals {fetchedData} {isDataGroupedByLabel} />
   {/if}
 
   {#if report === 'report-4' && error}
