@@ -1,7 +1,7 @@
 <script>
   export let fetchedData = []
 
-  $: console.log(JSON.stringify(items, null, 4))
+  $: console.log(JSON.stringify(fetchedData, null, 4))
 </script>
 
 {#each fetchedData as item}
