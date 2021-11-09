@@ -1,17 +1,15 @@
 <script>
-  export let items = []
-
-  $: console.log(JSON.stringify(items, null, 4))
+  export let fetchedData = []
 </script>
 
-{#each items as item}
-  <h3>{item.location}</h3>
+{#each fetchedData as data}
+  <h3>{data.location}</h3>
   <table>
     <tr>
       <th>Name</th>
       <th>Date</th>
     </tr>
-    {#each item.leads as lead}
+    {#each data.leads as lead}
       <tr>
         <td>{lead.name}</td>
         <td>{lead.date}</td>

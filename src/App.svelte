@@ -2,7 +2,7 @@
   // Data and util functions
   import { chartTypes as chartOptions } from './chartTypes'
   import { reports as reportOptions } from './reports'
-  import { items } from '../public/api/fake'
+  // import { items } from '../public/api/fake'
   import { printToConsole } from './console'
 
   // Svelte components
@@ -125,9 +125,9 @@
     <Totals {fetchedData} {isDataGroupedByLabel} />
   {/if}
 
-  {#if report === 'report-4'}
+  {#if fetchedData && report === 'report-4'}
     <div>
-      <Table {items} />
+      <Table {fetchedData} />
     </div>
   {/if}
 </main>

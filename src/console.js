@@ -1,6 +1,6 @@
 export const printToConsole = data => {
   const { startDate, endDate, endPoint, fetchedData } = data
-  console.clear()
+  // console.clear()
   queueMicrotask(
     console.log.bind(console, '%c\nStart Date | End Date', 'font-weight: bold;')
   )
