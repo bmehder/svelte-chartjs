@@ -11,9 +11,10 @@
 
   function formatPhoneNumber(phoneNumberString) {
     var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
-    var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
     if (match) {
-      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+      var intlCode = match[1] ? '+1 ' : ''
+      return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
     }
     return null
   }
@@ -54,7 +55,7 @@
               ></td
             >
             <td
-              ><a href="tel:{lead.telephone}" target="_blank"
+              ><a href="tel:{lead.phone}" target="_blank"
                 >{formatPhoneNumber(lead.phone)}</a
               ></td
             >
@@ -89,14 +90,22 @@
   }
   h3 {
     display: inline-block;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     color: #016;
     font-size: 2rem;
-    border-bottom: 4px solid;
   }
   table {
     margin: auto;
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-collapse: collapse;
+  }
+  th {
+    padding: 1rem;
+    background-color: #188;
+    color: white;
+    text-align: center;
   }
   tr:nth-child(even) {
     background-color: #f2f2f2;
