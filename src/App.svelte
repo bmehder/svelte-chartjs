@@ -79,6 +79,7 @@
       return
     }
 
+    // TODO: Debounce
     const getData = async endPoint => {
       error = null
       fetchedData = null
