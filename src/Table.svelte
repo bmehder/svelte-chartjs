@@ -26,6 +26,8 @@
   }
 </script>
 
+<svelte:window on:keypress={e => e.key === 'Enter' && handleClick()} />
+
 {#if !isAuthorized}
   <div>
     <input type="password" placeholder="Enter password..." bind:value />
@@ -45,18 +47,15 @@
           <th>Email</th>
           <th>Phone</th>
         </tr>
-        {#each data.leads as lead}
+        {#each data.leads as { submitted, name, requested, email, phone }}
           <tr>
-            <td>{lead.submitted}</td>
-            <td>{lead.name}</td>
-            <td>{lead.requested}</td>
+            <td>{submitted}</td>
+            <td>{name}</td>
+            <td>{requested}</td>
+            <td><a href="mailto:{email}" target="_blank">{email}</a></td>
             <td
-              ><a href="mailto:{lead.email}" target="_blank">{lead.email}</a
-              ></td
-            >
-            <td
-              ><a href="tel:{lead.phone}" target="_blank"
-                >{formatPhoneNumber(lead.phone)}</a
+              ><a href="tel:{phone}" target="_blank"
+                >{formatPhoneNumber(phone)}</a
               ></td
             >
           </tr>

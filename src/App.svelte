@@ -107,9 +107,9 @@
   }
 </script>
 
-<svelte:window
+<!-- <svelte:window
   on:keypress={e => e.key === 'Enter' && makeAPIRequest(null, endPoint)}
-/>
+/> -->
 
 <main use:makeAPIRequest={endPoint}>
   {#if !fetchedData && !error}
