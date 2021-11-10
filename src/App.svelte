@@ -125,7 +125,7 @@
     <Totals {fetchedData} {isDataGroupedByLabel} />
   {/if}
 
-  {#if fetchedData && report === 'report-4'}
+  {#if fetchedData?.length && report === 'report-4'}
     <div>
       <Table {fetchedData} />
     </div>

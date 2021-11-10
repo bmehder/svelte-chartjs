@@ -1,5 +1,5 @@
 <script>
-  export let fetchedData
+  export let fetchedData = []
   export let isDataGroupedByLabel
 
   let totalOfDataByDatasets = []
@@ -24,9 +24,12 @@
 
   const sumAllData = (node, fetchedData) => {
     const getSumOfAllData = () => {
-      totalOfAllData = fetchedData.datasets
-        .map(dataset => dataset.data.reduce((total, next) => (total += next)))
-        .reduce((total, next) => (total += next))
+      totalOfAllData = fetchedData.datasets.map(dataset =>
+        dataset.data.reduce((total, next) => (total += next))
+      )
+      if (totalOfAllData.length) {
+        totalOfAllData = totalOfAllData.reduce((total, next) => (total += next))
+      }
     }
 
     getSumOfAllData()
