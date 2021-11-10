@@ -95,6 +95,7 @@
     font-size: 2rem;
   }
   table {
+    min-width: 80%;
     margin: auto;
     margin-bottom: 4rem;
     text-align: left;
@@ -105,7 +106,6 @@
     padding: 1rem;
     background-color: #188;
     color: white;
-    text-align: center;
   }
   tr:nth-child(even) {
     background-color: #f2f2f2;
