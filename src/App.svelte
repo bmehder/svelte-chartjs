@@ -64,8 +64,8 @@
 
   // Keep dates within a logical range
   $: startDate < '2021-07-18' && (startDate = '2021-07-18')
-  $: endDate < '2021-07-18' && (endDate = '2021-07-18')
-  $: startDate > TODAY && (startDate = TODAY)
+  // $: endDate < '2021-07-18' && (endDate = '2021-07-18')
+  // $: startDate > TODAY && (startDate = TODAY)
   $: endDate > TODAY && (endDate = TODAY)
 
   // Reactive bools
@@ -107,10 +107,6 @@
     }
   }
 </script>
-
-<!-- <svelte:window
-  on:keypress={e => e.key === 'Enter' && makeAPIRequest(null, endPoint)}
-/> -->
 
 <main use:makeAPIRequest={endPoint}>
   {#if !fetchedData && !error}
