@@ -75,13 +75,14 @@
   $: isDataGroupedByLabel = report === 'report-3'
 
   const makeAPIRequest = (node, endPoint) => {
-    if (isInvalidDateRange) {
-      alert('The end date cannot be before the start date.')
-      return
-    }
-
-    // TODO: Debounce
     const getData = async endPoint => {
+      if (isInvalidDateRange) {
+        alert('The end date cannot be before the start date.')
+        startDate = '2021-07-18'
+        endDate = TODAY
+        return
+      }
+
       error = null
       fetchedData = null
       isLoading = true
@@ -107,9 +108,7 @@
         getData(endPoint).then(() => printToConsole(consoleData))
 
         canFetch = false
-        setTimeout(() => {
-          canFetch = true
-        }, 1000)
+        setTimeout(() => (canFetch = true), 1000)
       },
     }
   }

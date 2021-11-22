@@ -3,7 +3,6 @@
 
   let value = ''
   let isAuthorized = false
-  let tableHeadingsEl
 
   sessionStorage.getItem('isAuthorized') &&
     (isAuthorized = JSON.parse(sessionStorage.getItem('isAuthorized')))
@@ -104,7 +103,7 @@
     {#if data.leads.length !== 0}
       <h3>{data.location}</h3>
       <table class={`table${i}`}>
-        <tr bind:this={tableHeadingsEl}>
+        <tr>
           <th on:click={e => sortTable(e, 0, i)}>Submitted</th>
           <th on:click={e => sortTable(e, 1, i)}>Name</th>
           <th on:click={e => sortTable(e, 2, i)}>Date Requested</th>
