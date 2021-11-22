@@ -3,11 +3,13 @@
   import { quintOut } from 'svelte/easing'
 
   export let value
+  export let canFetch
 </script>
 
 <input
   type="date"
   bind:value
+  disabled={!canFetch}
   in:scale={{ delay: 400, opacity: 0.52 }}
   out:scale={{ duration: 200, opacity: 0.52, easing: quintOut }}
 />

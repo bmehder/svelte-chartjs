@@ -26,6 +26,7 @@
   let isLoading = false
   let fetchedData = null
   let error = null
+  let canFetch = true
 
   $: chartConfig = {
     type: chartType,
@@ -83,7 +84,6 @@
     const getData = async endPoint => {
       error = null
       fetchedData = null
-
       isLoading = true
 
       try {
@@ -102,7 +102,14 @@
 
     return {
       update(endPoint) {
+        if (!canFetch) return
+
         getData(endPoint).then(() => printToConsole(consoleData))
+
+        canFetch = false
+        setTimeout(() => {
+          canFetch = true
+        }, 1000)
       },
     }
   }
@@ -136,8 +143,8 @@
       <Select bind:value={chartType} options={chartOptions} />
     {/if}
     {#if isShowDates}
-      <DatePicker bind:value={startDate} />
-      <DatePicker bind:value={endDate} />
+      <DatePicker bind:value={startDate} {canFetch} />
+      <DatePicker bind:value={endDate} {canFetch} />
     {/if}
     <Refresher on:click={() => makeAPIRequest(null, endPoint)} {isLoading} />
   {/key}
