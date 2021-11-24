@@ -83,16 +83,17 @@
         return
       }
 
+      if (!canFetch) return
+
+      isLoading = true
       error = null
       fetchedData = null
-      isLoading = true
 
       try {
         const res = await fetch(endPoint)
         const data = await res.json()
         fetchedData = data
       } catch (err) {
-        isLoading = false
         error = err
       }
 
@@ -100,6 +101,9 @@
     }
 
     getData(endPoint).then(() => printToConsole(consoleData))
+
+    canFetch = false
+    setTimeout(() => (canFetch = true), 1000)
 
     return {
       update(endPoint) {
@@ -119,7 +123,7 @@
     <Spinner />
   {/if}
 
-  {#if error && report !== 'report-4'}
+  {#if error}
     <Error {error} />
   {/if}
 
@@ -128,10 +132,8 @@
     <Totals {fetchedData} {isDataGroupedByLabel} />
   {/if}
 
-  {#if fetchedData?.length && report === 'report-4'}
-    <div>
-      <Table {fetchedData} />
-    </div>
+  {#if fetchedData && report === 'report-4'}
+    <Table {fetchedData} />
   {/if}
 </main>
 
@@ -157,12 +159,6 @@
     padding: 0 2rem;
     background: white;
     text-align: center;
-  }
-
-  div {
-    width: 100%;
-    height: 80vh;
-    overflow-y: scroll;
   }
 
   footer {

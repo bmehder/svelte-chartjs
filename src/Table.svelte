@@ -98,34 +98,36 @@
   </div>
 {/if}
 
-{#if isAuthorized}
-  {#each fetchedData as data, i}
-    {#if data.leads.length !== 0}
-      <h3>{data.location}</h3>
-      <table class={`table${i}`}>
-        <tr>
-          <th on:click={e => sortTable(e, 0, i)}>Submitted</th>
-          <th on:click={e => sortTable(e, 1, i)}>Name</th>
-          <th on:click={e => sortTable(e, 2, i)}>Date Requested</th>
-          <th on:click={e => sortTable(e, 3, i)}>Email</th>
-          <th on:click={e => sortTable(e, 4, i)}>Phone</th>
-        </tr>
-        {#each data.leads as { submitted, name, requested, email, phone }}
+{#if isAuthorized && fetchedData}
+  <main>
+    {#each fetchedData as data, i}
+      {#if data.leads.length !== 0}
+        <h3>{data.location}</h3>
+        <table class={`table${i}`}>
           <tr>
-            <td>{submitted}</td>
-            <td>{name}</td>
-            <td>{requested}</td>
-            <td><a href="mailto:{email}" target="_blank">{email}</a></td>
-            <td
-              ><a href="tel:{phone}" target="_blank"
-                >{formatPhoneNumber(phone)}</a
-              ></td
-            >
+            <th on:click={e => sortTable(e, 0, i)}>Submitted</th>
+            <th on:click={e => sortTable(e, 1, i)}>Name</th>
+            <th on:click={e => sortTable(e, 2, i)}>Date Requested</th>
+            <th on:click={e => sortTable(e, 3, i)}>Email</th>
+            <th on:click={e => sortTable(e, 4, i)}>Phone</th>
           </tr>
-        {/each}
-      </table>
-    {/if}
-  {/each}
+          {#each data.leads as { submitted, name, requested, email, phone }}
+            <tr>
+              <td>{submitted}</td>
+              <td>{name}</td>
+              <td>{requested}</td>
+              <td><a href="mailto:{email}" target="_blank">{email}</a></td>
+              <td
+                ><a href="tel:{phone}" target="_blank"
+                  >{formatPhoneNumber(phone)}</a
+                ></td
+              >
+            </tr>
+          {/each}
+        </table>
+      {/if}
+    {/each}
+  </main>
 {/if}
 
 <style>
@@ -135,6 +137,11 @@
     align-items: center;
     min-height: 80vh;
     gap: 0.25rem;
+  }
+  main {
+    width: 100%;
+    height: 80vh;
+    overflow-y: scroll;
   }
   input,
   button {
