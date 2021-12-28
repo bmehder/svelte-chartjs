@@ -65,14 +65,12 @@
 
   // Keep dates within a logical range
   $: startDate < '2021-07-18' && (startDate = '2021-07-18')
-  // $: endDate < '2021-07-18' && (endDate = '2021-07-18')
-  // $: startDate > TODAY && (startDate = TODAY)
   $: endDate > TODAY && (endDate = TODAY)
 
   // Reactive bools
   $: isInvalidDateRange = endDate < startDate
   $: isShowDates = report === 'report-1' || report === 'report-4'
-  $: isDataGroupedByLabel = report === 'report-3'
+  $: isDataGroupedByLabel = report === 'report-3' || report === 'report-5'
 
   const makeAPIRequest = (node, endPoint) => {
     const getData = async endPoint => {
